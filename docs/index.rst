@@ -1,11 +1,6 @@
 Introduction to nullable
 ==============================================================================
 
-.. image:: https://raw.githubusercontent.com/yglukhov/nimble-tag/master/nimble.png
-   :height: 34
-   :width: 131
-   :alt: nimble
-
 NULLABLE
 
 Creates basic nim "types" that can, in addition to their normal values,
@@ -45,5 +40,5 @@ much more flexible manner because it can also be set to ``Null`` or
 Table Of Contents
 =================
 
-1. `Introduction to nullable <docs/index.rst>`__
-2. Appendix: `nullable Reference <docs/nullable-ref.rst>`__
+1. `Introduction to nullable <index.rst>`__
+2. Appendix: `nullable Reference <nullable-ref.rst>`__
