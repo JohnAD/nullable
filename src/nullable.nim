@@ -13,17 +13,16 @@
 ##     var x: int = 5
 ##
 ## This library introduces another "int" named "Nint". It can be used in a
-## much more flexible manner because it can also be set to ``Null`` or
-## ``Error``.
+## much more flexible manner because it can also be set to ``null`` or
+## ``error``.
 ##
 ## .. code:: nim
 ##
 ##     import nullable
 ##
-##     var y: Nint = Null()                # storing "nothing"
+##     var y: Nint = null                  # storing "nothing"
 ##     y = Error("something went wrong")   # storing an error instead
-##     y = 5                               # *DOES NOT WORK YET
-##     y = parse(5)                        # but this does
+##     y = 5                               # store an actual integer
 ##
 ##     # you can still do standard stuff:
 ##
