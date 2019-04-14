@@ -36,6 +36,8 @@
 
 
 type
+  NullClass = object
+    exists: bool
   Nint = object
     value: int       # defaults to 0
     null: bool       # defaults to false (not null)
@@ -44,6 +46,10 @@ type
     value: string    # defaults to ""
     null: bool       # defaults to false (not null)
     error: string    # defaults to ""
+
+const
+  null = NullClass(exists: true)
+
 
 # "error" overrides "null" overrides "real value"
 proc `$`(n: Nint): string =
@@ -60,23 +66,18 @@ proc `=`(n: var Nint, src: Nint) =
   n.null = src.null
   n.error = src.error
 
-proc error(n: var Nint, msg: string) =
-  n.error = msg
-
-proc parse(n: int): Nint =
+converter toNint(n: int): Nint = 
   result.value = n
   result.null = false
   result.error = ""
 
-proc parse(s: string): Nstring =
-  result.value = s
-  result.null = false
+converter toNint(n: NullClass): Nint =
+  result.value = 0
+  result.null = n.exists
   result.error = ""
 
-proc Null(): Nint =
-  result.value = 0
-  result.null = true
-  result.error = ""
+proc error(n: var Nint, msg: string) =
+  n.error = msg
 
 proc has_error(n: Nint): bool =
   result = n.error != ""
@@ -124,9 +125,9 @@ proc `+`(a: int, b: Nint): Nint =
 
 # test assignment
 
-var a: Nint = parse(3)
+var a: Nint = 3
 echo "3 = ", a
-a = Null()
+a = null
 var c = a
 echo "null = ", a
 error(a, "something_wrong") # we can be fancy and pass real exceptions later
@@ -134,15 +135,15 @@ echo "err = ", a
 
 # test math
 
-var b: Nint = parse(4)
+var b: Nint = 4
 echo "4 = ", b
-b = b + parse(10)
+b = b + 10
 echo "14 = ", b
 b = b + 2
 echo "16 = ", b
 b = 5 + b
 echo "21 = ", b
-a = a + parse(10) # should still be an error becase 'a' started as an error
+a = a + 10 # should still be an error becase 'a' started as an error
 echo "err = ", a
 
 # checks
