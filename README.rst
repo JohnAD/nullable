@@ -6,37 +6,88 @@ Introduction to nullable
    :width: 131
    :alt: nimble
 
-NULLABLE
+Replacement basic nim types that can, in addition to their normal values,
+take on the values of ``null`` or ``Error``.
 
-Creates basic nim "types" that can, in addition to their normal values,
-take on the values of Null or Error.
+Introduction
+------------
 
-EXAMPLE FOR INTEGERS
+Nim has five basic types:
 
-Nim has a integer type integrated into the language called "int". It is
-normally used like:
+- ``bool``
+- ``char``
+- ``string``
+- ``int`` (aka int32)
+- ``float`` (aka float64)
+
+Examples of their use:
 
 .. code:: nim
 
     var x: int = 5
+    var my_flag: bool = true
+    var firstName: string
 
-This library introduces another "int" named "Nint". It can be used in a
-much more flexible manner because it can also be set to ``null`` or
-``error``.
+This library introduces replacement types that are prefixed with the letter "n":
+
+- ``nbool``
+- ``nchar``
+- ``nstring``
+- ``nint``
+- ``nfloat``
+
+The primary difference when use these, it that in addition to the traditional
+values they type can have, you can also set it them ``null`` or ``Error``.
 
 .. code:: nim
 
     import nullable
 
-    var y: Nint = null                  # storing "nothing"
-    y = Error("something went wrong")   # storing an error instead
-    y = 5                               # store an actual integer
+    var x: nint = 5
+    var my_flag: nbool = true
+    var firstName: nstring
 
-    # you can still do standard stuff:
+    x = null                            # storing "nothing" instead
+    x = Error("something went wrong")   # storing an error instead
+    x = -3                              # store an actual integer
 
-    var z = y       # z is now a Nint valued at 5
-    z = y * 2       # z is now a Nint valued at 10
-    echo "z = ", z  # the message 'z = 10' displays on the screen
+    my_flag = null
+    firstName = Error("name not found")
+
+ The types largely behave like their counterparts:
+
+.. code:: nim
+
+    var z = x        # z is now a nint valued at -3
+    z = x * 2        # z is now a nint valued at -6
+    echo "z = ", z   # the message 'z = -6' displays on the screen
+
+
+Downsides
+---------
+
+There are a few downsides to using this library. Most notably:
+
+- Performance cost: these nullable types are, underneath, full objects. As
+  such, they use more memory and are somewhat slower.
+- Compatibility. Unless a library is written to use ``nullable`` you *might*
+  need to convert nullable types to the correct types when passing as
+  parameters. The library has built-in converters, but certain circumstances
+  might prevent automatic conversion. Failure should be obvious when
+  compiling.
+
+Future Versions
+---------------
+
+There are two planned expansions after version 1.0.0 is released:
+
+- Allow "log" information to be attached to a variable. It will be strictly
+  optional. With conditional compiling, no code should be added if not used.
+- Adding the following types:
+  - ``nint64`` (aka "long")
+  - ``ndate`` and ``ntimestamp``
+  - ``nOid``
+  - ``nDecimal``
 
 
 
@@ -45,4 +96,10 @@ Table Of Contents
 =================
 
 1. `Introduction to nullable <docs/index.rst>`__
-2. Appendix: `nullable Reference <docs/nullable-ref.rst>`__
+2. Appendices
+
+    A. `nullable Reference <docs/nullable-ref.rst>`__
+    B. `nullable/nint General Documentation <docs/nullable-nint-gen.rst>`__
+    C. `nullable/nint Reference <docs/nullable-nint-ref.rst>`__
+    D. `nullable/core General Documentation <docs/nullable-core-gen.rst>`__
+    E. `nullable/core Reference <docs/nullable-core-ref.rst>`__

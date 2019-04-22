@@ -1,7 +1,26 @@
-nullable Reference
+nullable/core Reference
 ==============================================================================
 
-The following are the references for nullable.
+The following are the references for nullable/core.
+
+
+
+Types
+=====
+
+
+
+NullClass
+---------------------------------------------------------
+
+    .. code:: nim
+
+        NullClass* = object
+          exists: bool   # note: this field is not actually used.
+
+
+    *source line: 2*
+
 
 
 
