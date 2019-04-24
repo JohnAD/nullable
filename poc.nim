@@ -13,6 +13,8 @@ echo "err = ", a
 var x: nint = 3
 var y: int = x
 echo "3 = ", $y
+var z = 8.nint
+echo "8 = ", $z
 
 # test math
 

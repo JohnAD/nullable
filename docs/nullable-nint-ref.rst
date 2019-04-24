@@ -22,7 +22,7 @@ nint
           hints: seq[Hint]        # defaults to empty
 
 
-    *source line: 47*
+    *source line: 83*
 
     The object used to represent the ``nint`` data type.
     
@@ -67,7 +67,7 @@ Procs and Methods
 
         proc `$`*(n: nint): string =
 
-    *source line: 90*
+    *source line: 126*
 
 
 
@@ -78,7 +78,7 @@ Procs and Methods
 
         proc `*`*(a: nint, b: nint): nint =
 
-    *source line: 212*
+    *source line: 248*
 
 
 
@@ -89,7 +89,7 @@ Procs and Methods
 
         proc `+`*(a: nint, b: nint): nint =
 
-    *source line: 182*
+    *source line: 218*
 
 
 
@@ -100,7 +100,7 @@ Procs and Methods
 
         proc `-`*(a: nint, b: nint): nint =
 
-    *source line: 197*
+    *source line: 233*
 
 
 
@@ -111,7 +111,7 @@ Procs and Methods
 
         proc `=`*(n: var nint, src: nint) =
 
-    *source line: 100*
+    *source line: 136*
 
 
 
@@ -122,7 +122,7 @@ error
 
         proc error*(n: var nint, msg: string) =
 
-    *source line: 162*
+    *source line: 198*
 
 
 
@@ -133,7 +133,7 @@ has_error
 
         proc has_error*(n: nint): bool =
 
-    *source line: 165*
+    *source line: 201*
 
 
 
@@ -144,7 +144,7 @@ is_good
 
         proc is_good*(n: nint): bool =
 
-    *source line: 175*
+    *source line: 211*
 
 
 
@@ -155,7 +155,7 @@ is_null
 
         proc is_null*(n: nint): bool =
 
-    *source line: 168*
+    *source line: 204*
 
 
 

@@ -1,16 +1,52 @@
-## module for ``nint``
-##
-
 import
   strutils
 
 import core
 
-
-## The ``nint`` object should behave just like the native 'int' type
-## in most instances.
+## The ``nint`` object type represents a "nullable" integer.
 ##
-## Sadly, nim does not yet object types in full-parity manner yet, so you
+## It should behave just like the native 'int' type in most instances; except
+## where the possible ``null`` or Error states are involved.
+##
+## Further details are in the "nint Reference" page linked at the bottom.
+##
+## Handling Declaration and Assignment
+## -----------------------------------
+## You will need need to explicity assign the variable to be of type ``nint``
+## if using a literal number. That is because literal integers default to
+## the built in data type of ``int``.
+## 
+## .. code:: nim
+##
+##     import nullable
+##
+##     var a = 3.nint         # works
+##     var b: nint = -4       # works
+##     var c = to_nint(78)    # works
+##     var d = c              # also works
+##     a = -99                # still works
+##
+##     var e = 23             # does not work; "e" will be an "int" instead
+##
+## and, of course, you can assign the value to ``null``, but again, you must
+## be explicit when declaring the variable.
+##
+## .. code:: nim
+##
+##     import nullable
+##
+##     var a = null.nint      # works
+##     var b: nint = null     # works
+##     var c = to_nint(null)  # works
+##     var d = c              # also works
+##     a = null               # still works
+##
+##     var e = null           # does NOT work; "e" will be unusable
+##
+## Handling an "Ambiguous Call" Compiler Error
+## -------------------------------------------
+##
+## Sadly, nim does not yet object types in a full-parity manner yet, so you
 ## will *sometimes* encounter an "ambiguous call" error. For example:
 ##
 ## .. code:: nim
