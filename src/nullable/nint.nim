@@ -1,22 +1,98 @@
 ## module for ``nint``
 ##
 
+import
+  strutils
+
 import core
+
+
+## The ``nint`` object should behave just like the native 'int' type
+## in most instances.
+##
+## Sadly, nim does not yet object types in full-parity manner yet, so you
+## will *sometimes* encounter an "ambiguous call" error. For example:
+##
+## .. code:: nim
+##
+##     import nullable
+##     var a: nint = 3
+##     a = a + 2
+##
+## You will get a compiler message similar to:
+##
+## .. code:: text
+##
+##     example.nim(3, 7) Error: ambiguous call; both system.-(x: int, y: int)[declared in 
+##     ../../.choosenim/toolchains/nim-0.19.4/lib/system.nim(942, 5)] and nint.-(a: nint,
+##     b: nint)[declared in src/nullable/nint.nim(161, 5)] match for: (nint, int literal(2))
+##
+## Essentially, the nim compiler doesn't know whether to:
+##
+## - convert ``a`` to an int, add the numbers, and then convert the plus operation back to an ``nint``, or
+##
+## - convert ``2`` to a ``nint``, and then add the numbers
+##
+## Hopefully, one day, the compiler will consider the assignment operation type as higher priority when handling such conflict.
+##
+## In the mean time, if you get such an error, explicity convert the value to a ``nint`` with ``to_nint``. Such as:
+## 
+## .. code:: nim
+##
+##     var a: nint = 3
+##     a = a + to_nint(2)
+##
 
 type
   nint* = object
+    ## The object used to represent the ``nint`` data type.
+    ##
+    ## Please note that elements are not directly accessible. You cannot
+    ## do this:
+    ##
+    ## .. code:: nim
+    ##
+    ##     var a: nint = 3
+    ##     echo "a = ", $a.stored_value
+    ##
+    ## that will generate a compiler error. Instead, rely on the libraries
+    ## ability to convert and adjust as needed. So, simply:
+    ##
+    ## .. code:: nim
+    ##
+    ##     var a: nint = 3
+    ##     echo "a = ", $a
+    ##
+    ## or possibly:
+    ##
+    ## .. code:: nim
+    ##
+    ##     var a: nint = 3
+    ##     var b: int = a
+    ##     echo "b = ", $b
+    ##
     stored_value: int       # defaults to 0
     null: bool              # defaults to false (not null)
     error: string           # defaults to ""
+    hints: seq[Hint]        # defaults to empty
+
+# "error" overrides "null" which overrides "real value"
+proc deduce(n: nint): NState =
+  if n.error != "":
+    return state_errored
+  elif n.null == true:
+    return state_nulled
+  return state_valued
+
 
 {.hint[XDeclaredButNotUsed]:off.}
 
-# "error" overrides "null" overrides "real value"
 proc `$`*(n: nint): string = 
   result = "unknown"
-  if n.error != "":
+  var s = deduce(n)
+  if s==state_errored:
     result = "error(" & n.error & ")"
-  elif n.null:
+  elif s==state_nulled:
     result = "null"
   else:
     result = $n.stored_value
@@ -25,16 +101,63 @@ proc `=`*(n: var nint, src: nint) =
   n.stored_value = src.stored_value
   n.null = src.null
   n.error = src.error
+  n.hints = src.hints
+
+# You cannot convert a bool to a nint
+# converter to_nint*(n: bool): nint = 
+
+# You cannot convert a char to a nint
+# converter to_nint*(n: char): nint = 
+
+converter to_nint*(n: string): nint = 
+  try:
+    result.stored_value = parseInt(n)
+    result.null = false
+    result.error = ""
+    result.hints = @[]
+  except ValueError:
+    result.stored_value = 0
+    result.null = false
+    result.error = "Could not convert string to nint."
+    result.hints = @[]
 
 converter to_nint*(n: int): nint = 
   result.stored_value = n
   result.null = false
   result.error = ""
+  result.hints = @[]
+
+converter to_nint*(n: float): nint = 
+  result.stored_value = int(n)
+  result.null = false
+  result.error = ""
+  result.hints = @[]
 
 converter to_nint*(n: NullClass): nint =
   result.stored_value = 0
   result.null = true
   result.error = ""
+  result.hints = @[]
+
+# You cannot convert a nint to a bool
+# converter from_nint*(n: bool): nint = 
+
+# You cannot convert a nint to a char
+# converter from_nint*(n: char): nint = 
+
+converter from_nint_to_string*(n: nint): string = 
+  result = $n
+
+converter from_nint_to_int*(n: nint): int = 
+  var s = deduce(n)
+  if s == state_nulled:
+    raise newException(ValueError, "Cannot convert a null to an int.")
+  elif s == state_errored:
+    raise newException(ValueError, "Cannot convert an error to an int.")
+  result = n.stored_value
+
+converter from_nint_to_float*(n: nint): float = 
+  result = float(n.stored_value)
 
 proc error*(n: var nint, msg: string) =
   n.error = msg
@@ -43,41 +166,77 @@ proc has_error*(n: nint): bool =
   result = n.error != ""
 
 proc is_null*(n: nint): bool =
-  result = n.null
-  if n.has_error():
+  var s = deduce(n)
+  if s==state_nulled:
+    result = true
+  else:
     result = false
 
 proc is_good*(n: nint): bool =
-  result = true
-  if n.has_error():
-    result = false
-  if n.is_null():
+  var s = deduce(n)
+  if s==state_valued:
+    result = true
+  else:
     result = false
 
 proc `+`*(a: nint, b: nint): nint =
-  if a.has_error():
+  var sa = deduce(a)
+  var sb = deduce(b)
+  if sa==state_errored:
     error(result, a.error)
-  elif b.has_error():
+  elif sb==state_errored:
     error(result, b.error)
-  elif a.is_null():
+  elif sa==state_nulled:
     error(result, "Cannot add a real number with null")
-  elif b.is_null():
+  elif sb==state_nulled:
     error(result, "Cannot add a real number with null")
   else:
     result.stored_value = a.stored_value + b.stored_value
+  # TODO: handle hints
 
-proc `+`*(a: nint, b: int): nint =
-  if a.has_error():
+proc `-`*(a: nint, b: nint): nint =
+  var sa = deduce(a)
+  var sb = deduce(b)
+  if sa==state_errored:
     error(result, a.error)
-  elif a.is_null():
-    error(result, "Cannot add a real number with null")
-  else:
-    result.stored_value = a.stored_value + b
-
-proc `+`*(a: int, b: nint): nint =
-  if b.has_error():
+  elif sb==state_errored:
     error(result, b.error)
-  elif b.is_null():
-    error(result, "Cannot add a real number with null")
+  elif sa==state_nulled:
+    error(result, "Cannot subtract a real number with null")
+  elif sb==state_nulled:
+    error(result, "Cannot subtract a real number with null")
   else:
-    result.stored_value = a + b.stored_value
+    result.stored_value = a.stored_value - b.stored_value
+  # TODO: handle hints
+
+proc `*`*(a: nint, b: nint): nint =
+  var sa = deduce(a)
+  var sb = deduce(b)
+  if sa==state_errored:
+    error(result, a.error)
+  elif sb==state_errored:
+    error(result, b.error)
+  elif sa==state_nulled:
+    error(result, "Cannot multiply a real number with null")
+  elif sb==state_nulled:
+    error(result, "Cannot multiply a real number with null")
+  else:
+    result.stored_value = a.stored_value * b.stored_value
+  # TODO: handle hints
+
+# TODO: handle this when nfloat is working? Or will nfloat convert automatically?
+# proc `/`*(a: nint, b: nint): nfloat =
+#   var sa = deduce(a)
+#   var sb = deduce(b)
+#   if sa==state_errored:
+#     error(result, a.error)
+#   elif sb==state_errored:
+#     error(result, b.error)
+#   elif sa==state_nulled:
+#     error(result, "Cannot divide a real number with null")
+#   elif sb==state_nulled:
+#     error(result, "Cannot divide a real number with null")
+#   else:
+#     result.stored_value = a.stored_value / b.stored_value
+#   # TODO: handle hints
+

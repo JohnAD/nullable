@@ -19,10 +19,37 @@ nint
           stored_value: int       # defaults to 0
           null: bool              # defaults to false (not null)
           error: string           # defaults to ""
+          hints: seq[Hint]        # defaults to empty
 
 
-    *source line: 7*
+    *source line: 47*
 
+    The object used to represent the ``nint`` data type.
+    
+    Please note that elements are not directly accessible. You cannot
+    do this:
+    
+    .. code:: nim
+    
+        var a: nint = 3
+        echo "a = ", $a.stored_value
+    
+    that will generate a compiler error. Instead, rely on the libraries
+    ability to convert and adjust as needed. So, simply:
+    
+    .. code:: nim
+    
+        var a: nint = 3
+        echo "a = ", $a
+    
+    or possibly:
+    
+    .. code:: nim
+    
+        var a: nint = 3
+        var b: int = a
+        echo "b = ", $b
+    
 
 
 
@@ -40,29 +67,18 @@ Procs and Methods
 
         proc `$`*(n: nint): string =
 
-    *source line: 15*
+    *source line: 90*
 
 
 
-`+`
+`*`
 ---------------------------------------------------------
 
     .. code:: nim
 
-        proc `+`*(a: int, b: nint): nint =
+        proc `*`*(a: nint, b: nint): nint =
 
-    *source line: 77*
-
-
-
-`+`
----------------------------------------------------------
-
-    .. code:: nim
-
-        proc `+`*(a: nint, b: int): nint =
-
-    *source line: 69*
+    *source line: 212*
 
 
 
@@ -73,7 +89,18 @@ Procs and Methods
 
         proc `+`*(a: nint, b: nint): nint =
 
-    *source line: 57*
+    *source line: 182*
+
+
+
+`-`
+---------------------------------------------------------
+
+    .. code:: nim
+
+        proc `-`*(a: nint, b: nint): nint =
+
+    *source line: 197*
 
 
 
@@ -84,7 +111,7 @@ Procs and Methods
 
         proc `=`*(n: var nint, src: nint) =
 
-    *source line: 24*
+    *source line: 100*
 
 
 
@@ -95,7 +122,7 @@ error
 
         proc error*(n: var nint, msg: string) =
 
-    *source line: 39*
+    *source line: 162*
 
 
 
@@ -106,7 +133,7 @@ has_error
 
         proc has_error*(n: nint): bool =
 
-    *source line: 42*
+    *source line: 165*
 
 
 
@@ -117,7 +144,7 @@ is_good
 
         proc is_good*(n: nint): bool =
 
-    *source line: 50*
+    *source line: 175*
 
 
 
@@ -128,7 +155,7 @@ is_null
 
         proc is_null*(n: nint): bool =
 
-    *source line: 45*
+    *source line: 168*
 
 
 
