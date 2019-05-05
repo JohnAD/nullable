@@ -46,14 +46,13 @@ import core
 ## Handling an "Ambiguous Call" Compiler Error
 ## -------------------------------------------
 ##
-## Sadly, nim does not yet object types in a full-parity manner yet, so you
-## will *sometimes* encounter an "ambiguous call" error. For example:
+## You can *sometimes* encounter an "ambiguous call" error at compile-time. For example:
 ##
 ## .. code:: nim
 ##
 ##     import nullable
 ##     var a: nint = 3
-##     a = a + 2
+##     a = a + 2         # compiler error here!
 ##
 ## You will get a compiler message similar to:
 ##
@@ -65,18 +64,19 @@ import core
 ##
 ## Essentially, the nim compiler doesn't know whether to:
 ##
-## - convert ``a`` to an int, add the numbers, and then convert the plus operation back to an ``nint``, or
+## a. convert ``a`` to an int, add the numbers, and then convert the answer back to an ``nint``, or
 ##
-## - convert ``2`` to a ``nint``, and then add the numbers
+## b. convert ``2`` to a ``nint``, and then add the numbers as ``nint``s
 ##
-## Hopefully, one day, the compiler will consider the assignment operation type as higher priority when handling such conflict.
+## Hopefully, one day, the compiler will consider the assignment operation type
+## as higher priority and choose (b) when handling such conflict.
 ##
-## In the mean time, if you get such an error, explicity convert the value to a ``nint`` with ``to_nint``. Such as:
+## In the mean time, if you get such an error, explicity convert the value(s) to a ``nint``. Such as:
 ## 
 ## .. code:: nim
 ##
 ##     var a: nint = 3
-##     a = a + to_nint(2)
+##     a = a + 2.nint
 ##
 
 type
@@ -198,6 +198,10 @@ converter from_nint_to_float*(n: nint): float =
 proc error*(n: var nint, msg: string) =
   n.error = msg
 
+proc make_null(n: var nint) =
+  n.stored_value = 0
+  n.null = true
+
 proc has_error*(n: nint): bool =
   result = n.error != ""
 
@@ -215,7 +219,27 @@ proc is_good*(n: nint): bool =
   else:
     result = false
 
+# ###########################################
+#
+# OPERATORS
+#
+# +, -, *, /, <, >, ==, @, ~, &, div, %, !, ?, ^, ., |, and, not
+#
+# the = and $ operator procs are declared earlier
+#
+# ###########################################
+
+# TODO: or xor shl shr div mod in notin is isnot of.
+
 proc `+`*(a: nint, b: nint): nint =
+  ## Operator: ADD
+  ##
+  ## Represented by the plus "+" symbol, this operation adds two nint
+  ## values together.
+  ##
+  ## If either value is ``null`` or errored, the result is an error.
+  ##
+  ## returns a new ``nint``
   var sa = deduce(a)
   var sb = deduce(b)
   if sa==state_errored:
@@ -223,14 +247,22 @@ proc `+`*(a: nint, b: nint): nint =
   elif sb==state_errored:
     error(result, b.error)
   elif sa==state_nulled:
-    error(result, "Cannot add a real number with null")
+    make_null(result)
   elif sb==state_nulled:
-    error(result, "Cannot add a real number with null")
+    make_null(result)
   else:
     result.stored_value = a.stored_value + b.stored_value
   # TODO: handle hints
 
 proc `-`*(a: nint, b: nint): nint =
+  ## Operator: SUBTRACT
+  ##
+  ## Represented by the minus "-" symbol, this operation subtracts two nint
+  ## values from each other.
+  ##
+  ## If either value is ``null`` or errored, the result is an error.
+  ##
+  ## returns a new ``nint``
   var sa = deduce(a)
   var sb = deduce(b)
   if sa==state_errored:
@@ -238,14 +270,22 @@ proc `-`*(a: nint, b: nint): nint =
   elif sb==state_errored:
     error(result, b.error)
   elif sa==state_nulled:
-    error(result, "Cannot subtract a real number with null")
+    make_null(result)
   elif sb==state_nulled:
-    error(result, "Cannot subtract a real number with null")
+    make_null(result)
   else:
     result.stored_value = a.stored_value - b.stored_value
   # TODO: handle hints
 
 proc `*`*(a: nint, b: nint): nint =
+  ## Operator: MULTIPLY
+  ##
+  ## Represented by the asterisk "*" symbol, this operation multiplies two nint
+  ## values together.
+  ##
+  ## If either value is ``null`` or errored, the result is an error.
+  ##
+  ## returns a new ``nint``
   var sa = deduce(a)
   var sb = deduce(b)
   if sa==state_errored:
@@ -253,15 +293,24 @@ proc `*`*(a: nint, b: nint): nint =
   elif sb==state_errored:
     error(result, b.error)
   elif sa==state_nulled:
-    error(result, "Cannot multiply a real number with null")
+    make_null(result)
   elif sb==state_nulled:
-    error(result, "Cannot multiply a real number with null")
+    make_null(result)
   else:
     result.stored_value = a.stored_value * b.stored_value
   # TODO: handle hints
 
 # TODO: handle this when nfloat is working? Or will nfloat convert automatically?
 # proc `/`*(a: nint, b: nint): nfloat =
+#   ## Operator: DIVIDE
+#   ##
+#   ## Represented by the slash "/" symbol, this operation divides two nint
+#   ## values.
+#   ##
+#   ## If either value is ``null`` or errored, the result is an error.
+#   ## If the divisor is zero, the result is an error.
+#   ##
+#   ## returns a new ``nfloat``
 #   var sa = deduce(a)
 #   var sb = deduce(b)
 #   if sa==state_errored:
@@ -269,10 +318,176 @@ proc `*`*(a: nint, b: nint): nint =
 #   elif sb==state_errored:
 #     error(result, b.error)
 #   elif sa==state_nulled:
-#     error(result, "Cannot divide a real number with null")
+#     make_null(result)
 #   elif sb==state_nulled:
-#     error(result, "Cannot divide a real number with null")
+#     make_null(result)
 #   else:
 #     result.stored_value = a.stored_value / b.stored_value
 #   # TODO: handle hints
 
+# TODO: handle this when nbool is working?
+proc `<`*(a: nint, b: nint): bool =
+  ## Operator: LESS-THAN
+  ##
+  ## Represented by the angle-bracket "<" symbol, this operation compares two
+  ## ``nint`` values.
+  ##
+  ## If either value is ``null``, the result is false
+  ## If either value is ``error``, the result is false.
+  var sa = deduce(a)
+  var sb = deduce(b)
+  if sa==state_errored:
+    return false
+  elif sb==state_errored:
+    return false
+  elif sa==state_nulled:
+    return false
+  elif sb==state_nulled:
+    return false
+  else:
+    return a.stored_value < b.stored_value
+
+# TODO: handle this when nbool is working?
+proc `>`*(a: nint, b: nint): bool =
+  ## Operator: GREATER-THAN
+  ##
+  ## Represented by the angle-bracket "<" symbol, this operation compares two
+  ## ``nint`` values.
+  ##
+  ## If either value is ``null``, the result is false.
+  ## If either value is ``error``, the result is false.
+  var sa = deduce(a)
+  var sb = deduce(b)
+  if sa==state_errored:
+    return false
+  elif sb==state_errored:
+    return false
+  elif sa==state_nulled:
+    return false
+  elif sb==state_nulled:
+    return false
+  else:
+    return a.stored_value > b.stored_value
+
+# # TODO: handle this when nbool is working ?
+proc `==`*(a: nint, b: nint): bool =
+  ## Operator: EQUAL-TO (nint vs nint)
+  ##
+  ## Represented by two equal symbols "==" symbol, this operation compares two
+  ## ``nint`` values.
+  ##
+  ## If both values are ``null``, the result is true. If only one, then false.
+  ## If either value is ``error``, the result is false.
+  var sa = deduce(a)
+  var sb = deduce(b)
+  if sa==state_errored:
+    return false
+  elif sb==state_errored:
+    return false
+  elif (sa==state_nulled) or (sb==state_nulled):
+    return a.null == b.null
+  else:
+    return a.stored_value == b.stored_value
+
+proc `==`*(a: nint, b: int): bool =
+  ## Operator: EQUAL-TO (nint vs int)
+  ##
+  ## Represented by two equal symbols "==" symbol, this operation compares two
+  ## ``nint`` values.
+  ##
+  ## If both values are ``null``, the result is true. If only one, then false.
+  ## If either value is ``error``, the result is false.
+  var sa = deduce(a)
+  if sa==state_errored:
+    return false
+  elif sa==state_nulled:
+    return false
+  else:
+    return a.stored_value == b
+
+proc `==`*(a: int, b: nint): bool =
+  ## Operator: EQUAL-TO (int vs nint)
+  ##
+  ## Represented by two equal symbols "==" symbol, this operation compares two
+  ## ``nint`` values.
+  ##
+  ## If both values are ``null``, the result is true. If only one, then false.
+  ## If either value is ``error``, the result is false.
+  var sb = deduce(b)
+  if sb==state_errored:
+    return false
+  elif sb==state_nulled:
+    return false
+  else:
+    return a == b.stored_value
+
+# The '@' operator has no meaning to nint
+
+# The '~' operator has no meaning to nint
+
+# The '&' operator has no meaning to nint
+
+proc `div`*(dividend: nint, divisor: nint): nint =
+  ## Operator: INTEGER_DIVIDE
+  ##
+  ## This operation divides two nint values and returns only the integer
+  ## quotient.
+  ##
+  ## If either value is ``null`` or errored, the result is an error.
+  ## If the divisor is zero, the result is an error.
+  ##
+  ## returns a new ``nint``
+  var sn = deduce(dividend)
+  var sd = deduce(divisor)
+  if sn==state_errored:
+    error(result, dividend.error)
+  elif sd==state_errored:
+    error(result, divisor.error)
+  elif sn==state_nulled:
+    make_null(result)
+  elif sd==state_nulled:
+    make_null(result)
+  else:
+    result.stored_value = dividend.stored_value div divisor.stored_value
+  # TODO: handle hints
+
+# BUGGY, but don't know why yet
+# proc `%`*(dividend: nint, divisor: nint): nint =
+#   ## Operator: MODULO
+#   ##
+#   ## Represented by the percent "%" symbol, this operation divides two nint
+#   ## values and returns the remainder
+#   ##
+#   ## If either value is ``null`` or errored, the result is an error.
+#   ## If the divisor is zero, the result is an error.
+#   ##
+#   ## returns a new ``nint``
+#   var sn = deduce(dividend)
+#   var sd = deduce(divisor)
+#   if sn==state_errored:
+#     error(result, dividend.error)
+#   elif sd==state_errored:
+#     error(result, divisor.error)
+#   elif sn==state_nulled:
+#     make_null(result)
+#   elif sd==state_nulled:
+#     make_null(result)
+#   else:
+#     echo "here"
+#     let x: int = dividend.stored_value % divisor.stored_value
+#     result.stored_value = x
+#   # TODO: handle hints
+
+# The '!' operator has no meaning to nint
+
+# The '?' operator has no meaning to nint
+
+# The '^' operator has no meaning to nint
+
+# The '.' operator has no meaning to nint
+
+# The '|' operator has no meaning to nint
+
+# The 'and' operator has no meaning to nint
+
+# The 'not' operator has no meaning to nint

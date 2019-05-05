@@ -5,7 +5,7 @@ export Level
 
 type
   Judgement* = enum
-    ## Category of judgement for the hint.
+    ## Category of judgement for a hint.
     ## 
     ## info
     ##     neutral (but ok if forced to judge)
@@ -26,7 +26,7 @@ type
     warning,
     danger
   Audience* = enum
-    ## Distribution limits for news of the hint.
+    ## Distribution limits for news of a hint.
     ## 
     ## ops
     ##   only seen by those with server/system maintainer clearance

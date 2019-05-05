@@ -44,14 +44,13 @@ be explicit when declaring the variable.
 Handling an "Ambiguous Call" Compiler Error
 -------------------------------------------
 
-Sadly, nim does not yet object types in a full-parity manner yet, so you
-will *sometimes* encounter an "ambiguous call" error. For example:
+You can *sometimes* encounter an "ambiguous call" error at compile-time. For example:
 
 .. code:: nim
 
     import nullable
     var a: nint = 3
-    a = a + 2
+    a = a + 2         # compiler error here!
 
 You will get a compiler message similar to:
 
@@ -63,18 +62,19 @@ You will get a compiler message similar to:
 
 Essentially, the nim compiler doesn't know whether to:
 
-- convert ``a`` to an int, add the numbers, and then convert the plus operation back to an ``nint``, or
+a. convert ``a`` to an int, add the numbers, and then convert the answer back to an ``nint``, or
 
-- convert ``2`` to a ``nint``, and then add the numbers
+b. convert ``2`` to a ``nint``, and then add the numbers as ``nint``s
 
-Hopefully, one day, the compiler will consider the assignment operation type as higher priority when handling such conflict.
+Hopefully, one day, the compiler will consider the assignment operation type
+as higher priority and choose (b) when handling such conflict.
 
-In the mean time, if you get such an error, explicity convert the value to a ``nint`` with ``to_nint``. Such as:
+In the mean time, if you get such an error, explicity convert the value(s) to a ``nint``. Such as:
 
 .. code:: nim
 
     var a: nint = 3
-    a = a + to_nint(2)
+    a = a + 2.nint
 
 
 

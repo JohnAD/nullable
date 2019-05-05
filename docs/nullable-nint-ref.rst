@@ -78,8 +78,16 @@ Procs and Methods
 
         proc `*`*(a: nint, b: nint): nint =
 
-    *source line: 248*
+    *source line: 280*
 
+    Operator: MULTIPLY
+    
+    Represented by the asterisk "*" symbol, this operation multiplies two nint
+    values together.
+    
+    If either value is ``null`` or errored, the result is an error.
+    
+    returns a new ``nint``
 
 
 `+`
@@ -89,8 +97,16 @@ Procs and Methods
 
         proc `+`*(a: nint, b: nint): nint =
 
-    *source line: 218*
+    *source line: 234*
 
+    Operator: ADD
+    
+    Represented by the plus "+" symbol, this operation adds two nint
+    values together.
+    
+    If either value is ``null`` or errored, the result is an error.
+    
+    returns a new ``nint``
 
 
 `-`
@@ -100,8 +116,88 @@ Procs and Methods
 
         proc `-`*(a: nint, b: nint): nint =
 
-    *source line: 233*
+    *source line: 257*
 
+    Operator: SUBTRACT
+    
+    Represented by the minus "-" symbol, this operation subtracts two nint
+    values from each other.
+    
+    If either value is ``null`` or errored, the result is an error.
+    
+    returns a new ``nint``
+
+
+`<`
+---------------------------------------------------------
+
+    .. code:: nim
+
+        proc `<`*(a: nint, b: nint): bool =
+
+    *source line: 329*
+
+    Operator: LESS-THAN
+    
+    Represented by the angle-bracket "<" symbol, this operation compares two
+    ``nint`` values.
+    
+    If either value is ``null``, the result is false
+    If either value is ``error``, the result is false.
+
+
+`==`
+---------------------------------------------------------
+
+    .. code:: nim
+
+        proc `==`*(a: int, b: nint): bool =
+
+    *source line: 408*
+
+    Operator: EQUAL-TO (int vs nint)
+    
+    Represented by two equal symbols "==" symbol, this operation compares two
+    ``nint`` values.
+    
+    If both values are ``null``, the result is true. If only one, then false.
+    If either value is ``error``, the result is false.
+
+
+`==`
+---------------------------------------------------------
+
+    .. code:: nim
+
+        proc `==`*(a: nint, b: int): bool =
+
+    *source line: 392*
+
+    Operator: EQUAL-TO (nint vs int)
+    
+    Represented by two equal symbols "==" symbol, this operation compares two
+    ``nint`` values.
+    
+    If both values are ``null``, the result is true. If only one, then false.
+    If either value is ``error``, the result is false.
+
+
+`==`
+---------------------------------------------------------
+
+    .. code:: nim
+
+        proc `==`*(a: nint, b: nint): bool =
+
+    *source line: 373*
+
+    Operator: EQUAL-TO (nint vs nint)
+    
+    Represented by two equal symbols "==" symbol, this operation compares two
+    ``nint`` values.
+    
+    If both values are ``null``, the result is true. If only one, then false.
+    If either value is ``error``, the result is false.
 
 
 `=`
@@ -113,6 +209,44 @@ Procs and Methods
 
     *source line: 136*
 
+
+
+`>`
+---------------------------------------------------------
+
+    .. code:: nim
+
+        proc `>`*(a: nint, b: nint): bool =
+
+    *source line: 351*
+
+    Operator: GREATER-THAN
+    
+    Represented by the angle-bracket "<" symbol, this operation compares two
+    ``nint`` values.
+    
+    If either value is ``null``, the result is false.
+    If either value is ``error``, the result is false.
+
+
+`div`
+---------------------------------------------------------
+
+    .. code:: nim
+
+        proc `div`*(dividend: nint, divisor: nint): nint =
+
+    *source line: 430*
+
+    Operator: INTEGER_DIVIDE
+    
+    This operation divides two nint values and returns only the integer
+    quotient.
+    
+    If either value is ``null`` or errored, the result is an error.
+    If the divisor is zero, the result is an error.
+    
+    returns a new ``nint``
 
 
 error
@@ -133,7 +267,7 @@ has_error
 
         proc has_error*(n: nint): bool =
 
-    *source line: 201*
+    *source line: 205*
 
 
 
@@ -144,7 +278,7 @@ is_good
 
         proc is_good*(n: nint): bool =
 
-    *source line: 211*
+    *source line: 215*
 
 
 
@@ -155,7 +289,7 @@ is_null
 
         proc is_null*(n: nint): bool =
 
-    *source line: 204*
+    *source line: 208*
 
 
 

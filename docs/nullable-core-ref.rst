@@ -24,7 +24,7 @@ Audience
 
     *source line: 28*
 
-    Distribution limits for news of the hint.
+    Distribution limits for news of a hint.
     
     ops
       only seen by those with server/system maintainer clearance
@@ -69,7 +69,7 @@ Judgement
 
     *source line: 7*
 
-    Category of judgement for the hint.
+    Category of judgement for a hint.
     
     info
         neutral (but ok if forced to judge)

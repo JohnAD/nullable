@@ -63,6 +63,34 @@
 ##     echo "z = ", z   # the message 'z = -6' displays on the screen
 ##
 ##
+## The True Meaning of Null
+## ------------------------
+##
+## The meaning of ``null`` is based on the ANSI SQL meaning of the word:
+##
+## > Null is a value that is UNKNOWN.
+##
+## It does NOT mean "a missing value". The semantic difference is
+## subtle but very important. For example, if you where to ADD a missing value
+## to the number 2, you would expect the answer to be two. After all, if something
+## is not there, it implies zero. But ``null`` does not work that way. Adding
+## 2 to an unknown value is another new unknown value. The answer is "two plus
+## some number we don't know." Therefore:
+##
+## .. code:: nim
+##
+##     var a: nint = null
+##     var b: nint = 2
+##     var c: nint
+##     c = a + b
+##     echo "c = ", c
+##
+## results in an output of:
+##
+## .. code:: 
+##
+##     c = null
+##
 ## Downsides
 ## ---------
 ##
