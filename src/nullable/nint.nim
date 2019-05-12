@@ -110,7 +110,7 @@ type
     ##
     stored_value: int            # defaults to 0
     null: bool                   # defaults to false (not null)
-    error: ExceptionClass   # defaults to empty
+    error: ExceptionClass        # defaults to empty
     hints: seq[Hint]             # defaults to empty
 
 # "error" overrides "null" which overrides "real value"
@@ -214,18 +214,45 @@ converter from_nint_to_float*(n: nint): float =
 
 
 proc make_null(n: var nint) =
+  ## Force the nint into a null state
   n.stored_value = 0
   n.null = true
+  n.error = ExceptionClass()
 
 proc has_error*(n: nint): bool =
+  ## Check to see if n has an error associated with it.
+  ##
+  ## .. code:: nim
+  ##
+  ##     var a: nint = ValueError("Too small.")
+  ##     if a.has_error:
+  ##       echo "Error found: " & $a
+  ##
   var s = deduce(n)
   return s==state_errored
 
 proc is_null*(n: nint): bool =
+  ## Check to see if n is unknown (a null).
+  ##
+  ## .. code:: nim
+  ##
+  ##     var a: nint = null
+  ##     if a.is_null:
+  ##       echo "It is null."
+  ##
   var s = deduce(n)
   return s==state_nulled
 
 proc is_good*(n: nint): bool =
+  ## Check to see if n has a legitimate number. In other words, it verifies that it is not 'null' and it does not
+  ## have an error. A newly declared ``nint`` defaults to 0 (zero) and is good.
+  ##
+  ## .. code:: nim
+  ##
+  ##     var a: nint = 5
+  ##     if a.is_good:
+  ##       echo "a = " & $a
+  ##
   var s = deduce(n)
   return s==state_valued
 

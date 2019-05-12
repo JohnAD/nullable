@@ -47,7 +47,7 @@
 ##     var my_flag: nbool = true
 ##     var firstName: nstring
 ##
-##     x = null                                 # storing "nothing"/null
+##     x = null                                 # storing "unknown"/null
 ##     x = ValueError("Something went wrong.")  # storing an error
 ##     x = -3                                   # store an actual integer
 ##

@@ -18,7 +18,7 @@ nint
         nint* = object
           stored_value: int            # defaults to 0
           null: bool                   # defaults to false (not null)
-          error: ExceptionClass   # defaults to empty
+          error: ExceptionClass        # defaults to empty
           hints: seq[Hint]             # defaults to empty
 
 
@@ -78,7 +78,7 @@ Procs and Methods
 
         proc `*`*(a: nint, b: nint): nint =
 
-    *source line: 290*
+    *source line: 317*
 
     Operator: MULTIPLY
     
@@ -97,7 +97,7 @@ Procs and Methods
 
         proc `+`*(a: nint, b: nint): nint =
 
-    *source line: 244*
+    *source line: 271*
 
     Operator: ADD
     
@@ -116,7 +116,7 @@ Procs and Methods
 
         proc `-`*(a: nint, b: nint): nint =
 
-    *source line: 267*
+    *source line: 294*
 
     Operator: SUBTRACT
     
@@ -135,7 +135,7 @@ Procs and Methods
 
         proc `<`*(a: nint, b: nint): bool =
 
-    *source line: 339*
+    *source line: 366*
 
     Operator: LESS-THAN
     
@@ -153,7 +153,7 @@ Procs and Methods
 
         proc `==`*(a: int, b: nint): bool =
 
-    *source line: 418*
+    *source line: 445*
 
     Operator: EQUAL-TO (int vs nint)
     
@@ -171,7 +171,7 @@ Procs and Methods
 
         proc `==`*(a: nint, b: int): bool =
 
-    *source line: 402*
+    *source line: 429*
 
     Operator: EQUAL-TO (nint vs int)
     
@@ -189,7 +189,7 @@ Procs and Methods
 
         proc `==`*(a: nint, b: nint): bool =
 
-    *source line: 383*
+    *source line: 410*
 
     Operator: EQUAL-TO (nint vs nint)
     
@@ -218,7 +218,7 @@ Procs and Methods
 
         proc `>`*(a: nint, b: nint): bool =
 
-    *source line: 361*
+    *source line: 388*
 
     Operator: GREATER-THAN
     
@@ -236,7 +236,7 @@ Procs and Methods
 
         proc `div`*(dividend: nint, divisor: nint): nint =
 
-    *source line: 440*
+    *source line: 467*
 
     Operator: INTEGER_DIVIDE
     
@@ -256,8 +256,16 @@ has_error
 
         proc has_error*(n: nint): bool =
 
-    *source line: 220*
+    *source line: 222*
 
+    Check to see if n has an error associated with it.
+    
+    .. code:: nim
+    
+        var a: nint = ValueError("Too small.")
+        if a.has_error:
+          echo "Error found: " & $a
+    
 
 
 is_good
@@ -267,8 +275,17 @@ is_good
 
         proc is_good*(n: nint): bool =
 
-    *source line: 228*
+    *source line: 246*
 
+    Check to see if n has a legitimate number. In other words, it verifies that it is not 'null' and it does not
+    have an error. A newly declared ``nint`` defaults to 0 (zero) and is good.
+    
+    .. code:: nim
+    
+        var a: nint = 5
+        if a.is_good:
+          echo "a = " & $a
+    
 
 
 is_null
@@ -278,8 +295,16 @@ is_null
 
         proc is_null*(n: nint): bool =
 
-    *source line: 224*
+    *source line: 234*
 
+    Check to see if n is unknown (a null).
+    
+    .. code:: nim
+    
+        var a: nint = null
+        if a.is_null:
+          echo "It is null."
+    
 
 
 
