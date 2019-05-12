@@ -47,12 +47,12 @@
 ##     var my_flag: nbool = true
 ##     var firstName: nstring
 ##
-##     x = null                            # storing "nothing"/null
-##     x = Error("something went wrong")   # storing an error
-##     x = -3                              # store an actual integer
+##     x = null                                 # storing "nothing"/null
+##     x = ValueError("Something went wrong.")  # storing an error
+##     x = -3                                   # store an actual integer
 ##
 ##     my_flag = null
-##     firstName = Error("name not found")
+##     firstName = IOError("Name not found.")
 ##
 ## The types largely behave like their counterparts:
 ##
@@ -84,12 +84,16 @@
 ##     var c: nint
 ##     c = a + b
 ##     echo "c = ", c
+##     echo a.is_null    # this is the best way to detect null
+##     echo (a == null)  # this is a tricky one: both "a" and "null" are DIFFERENT unknown values
 ##
 ## results in an output of:
 ##
 ## .. code:: 
 ##
 ##     c = null
+##     true
+##     false
 ##
 ## Downsides
 ## ---------

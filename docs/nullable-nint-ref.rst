@@ -16,13 +16,13 @@ nint
     .. code:: nim
 
         nint* = object
-          stored_value: int       # defaults to 0
-          null: bool              # defaults to false (not null)
-          error: string           # defaults to ""
-          hints: seq[Hint]        # defaults to empty
+          stored_value: int            # defaults to 0
+          null: bool                   # defaults to false (not null)
+          error: ExceptionClass   # defaults to empty
+          hints: seq[Hint]             # defaults to empty
 
 
-    *source line: 83*
+    *source line: 84*
 
     The object used to represent the ``nint`` data type.
     
@@ -67,7 +67,7 @@ Procs and Methods
 
         proc `$`*(n: nint): string =
 
-    *source line: 126*
+    *source line: 127*
 
 
 
@@ -78,7 +78,7 @@ Procs and Methods
 
         proc `*`*(a: nint, b: nint): nint =
 
-    *source line: 280*
+    *source line: 290*
 
     Operator: MULTIPLY
     
@@ -97,7 +97,7 @@ Procs and Methods
 
         proc `+`*(a: nint, b: nint): nint =
 
-    *source line: 234*
+    *source line: 244*
 
     Operator: ADD
     
@@ -116,7 +116,7 @@ Procs and Methods
 
         proc `-`*(a: nint, b: nint): nint =
 
-    *source line: 257*
+    *source line: 267*
 
     Operator: SUBTRACT
     
@@ -135,7 +135,7 @@ Procs and Methods
 
         proc `<`*(a: nint, b: nint): bool =
 
-    *source line: 329*
+    *source line: 339*
 
     Operator: LESS-THAN
     
@@ -153,7 +153,7 @@ Procs and Methods
 
         proc `==`*(a: int, b: nint): bool =
 
-    *source line: 408*
+    *source line: 418*
 
     Operator: EQUAL-TO (int vs nint)
     
@@ -171,7 +171,7 @@ Procs and Methods
 
         proc `==`*(a: nint, b: int): bool =
 
-    *source line: 392*
+    *source line: 402*
 
     Operator: EQUAL-TO (nint vs int)
     
@@ -189,7 +189,7 @@ Procs and Methods
 
         proc `==`*(a: nint, b: nint): bool =
 
-    *source line: 373*
+    *source line: 383*
 
     Operator: EQUAL-TO (nint vs nint)
     
@@ -207,7 +207,7 @@ Procs and Methods
 
         proc `=`*(n: var nint, src: nint) =
 
-    *source line: 136*
+    *source line: 137*
 
 
 
@@ -218,7 +218,7 @@ Procs and Methods
 
         proc `>`*(a: nint, b: nint): bool =
 
-    *source line: 351*
+    *source line: 361*
 
     Operator: GREATER-THAN
     
@@ -236,7 +236,7 @@ Procs and Methods
 
         proc `div`*(dividend: nint, divisor: nint): nint =
 
-    *source line: 430*
+    *source line: 440*
 
     Operator: INTEGER_DIVIDE
     
@@ -249,17 +249,6 @@ Procs and Methods
     returns a new ``nint``
 
 
-error
----------------------------------------------------------
-
-    .. code:: nim
-
-        proc error*(n: var nint, msg: string) =
-
-    *source line: 198*
-
-
-
 has_error
 ---------------------------------------------------------
 
@@ -267,7 +256,7 @@ has_error
 
         proc has_error*(n: nint): bool =
 
-    *source line: 205*
+    *source line: 220*
 
 
 
@@ -278,7 +267,7 @@ is_good
 
         proc is_good*(n: nint): bool =
 
-    *source line: 215*
+    *source line: 228*
 
 
 
@@ -289,7 +278,7 @@ is_null
 
         proc is_null*(n: nint): bool =
 
-    *source line: 208*
+    *source line: 224*
 
 
 

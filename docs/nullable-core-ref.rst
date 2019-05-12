@@ -22,7 +22,7 @@ Audience
           public
 
 
-    *source line: 28*
+    *source line: 29*
 
     Distribution limits for news of a hint.
     
@@ -39,6 +39,21 @@ Audience
       the whole world (no restrictions)
 
 
+ExceptionClass
+---------------------------------------------------------
+
+    .. code:: nim
+
+        ExceptionClass* = object
+          flag*: bool
+          msg*: string
+          exception_type*: string
+
+
+    *source line: 62*
+
+
+
 Hint
 ---------------------------------------------------------
 
@@ -51,7 +66,7 @@ Hint
           audience*: Audience    # defaults to 'ops'
 
 
-    *source line: 56*
+    *source line: 57*
 
 
 
@@ -67,7 +82,7 @@ Judgement
           danger
 
 
-    *source line: 7*
+    *source line: 8*
 
     Category of judgement for a hint.
     
@@ -98,7 +113,7 @@ NState
           state_errored
 
 
-    *source line: 48*
+    *source line: 49*
 
 
 
@@ -111,10 +126,26 @@ NullClass
           exists: bool          # note: this field is not actually used.
 
 
-    *source line: 54*
+    *source line: 55*
 
 
 
+
+
+
+
+Procs and Methods
+=================
+
+
+`$`
+---------------------------------------------------------
+
+    .. code:: nim
+
+        proc `$`*(e: ExceptionClass): string =
+
+    *source line: 67*
 
 
 

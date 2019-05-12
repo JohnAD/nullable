@@ -1,5 +1,6 @@
 import
-  strutils
+  strutils,
+  typetraits
 
 import core
 
@@ -107,14 +108,14 @@ type
     ##     var b: int = a
     ##     echo "b = ", $b
     ##
-    stored_value: int       # defaults to 0
-    null: bool              # defaults to false (not null)
-    error: string           # defaults to ""
-    hints: seq[Hint]        # defaults to empty
+    stored_value: int            # defaults to 0
+    null: bool                   # defaults to false (not null)
+    error: ExceptionClass   # defaults to empty
+    hints: seq[Hint]             # defaults to empty
 
 # "error" overrides "null" which overrides "real value"
 proc deduce(n: nint): NState =
-  if n.error != "":
+  if n.error.flag:
     return state_errored
   elif n.null == true:
     return state_nulled
@@ -127,7 +128,7 @@ proc `$`*(n: nint): string =
   result = "unknown"
   var s = deduce(n)
   if s==state_errored:
-    result = "error(" & n.error & ")"
+    result = $n.error
   elif s==state_nulled:
     result = "null"
   else:
@@ -139,6 +140,31 @@ proc `=`*(n: var nint, src: nint) =
   n.error = src.error
   n.hints = src.hints
 
+converter to_nint*(n: NullClass): nint =
+  result.null = true
+
+
+converter to_nint*(e: IOError): nint =
+  result.error.msg = e.msg
+  result.error.flag = true
+  result.error.exception_type = name(type(e))
+
+converter to_nint*(e: OSError): nint =
+  result.error.msg = e.msg
+  result.error.flag = true
+  result.error.exception_type = name(type(e))
+
+converter to_nint*(e: ResourceExhaustedError): nint =
+  result.error.msg = e.msg
+  result.error.flag = true
+  result.error.exception_type = name(type(e))
+
+converter to_nint*(e: ValueError): nint =
+  result.error.msg = e.msg
+  result.error.flag = true
+  result.error.exception_type = name(type(e))
+
+
 # You cannot convert a bool to a nint
 # converter to_nint*(n: bool): nint = 
 
@@ -149,30 +175,21 @@ converter to_nint*(n: string): nint =
   try:
     result.stored_value = parseInt(n)
     result.null = false
-    result.error = ""
+    result.error = ExceptionClass()
     result.hints = @[]
   except ValueError:
-    result.stored_value = 0
-    result.null = false
-    result.error = "Could not convert string to nint."
-    result.hints = @[]
+    result = ValueError(msg: "Could not convert string to nint.")
 
 converter to_nint*(n: int): nint = 
   result.stored_value = n
   result.null = false
-  result.error = ""
+  result.error = ExceptionClass()
   result.hints = @[]
 
 converter to_nint*(n: float): nint = 
   result.stored_value = int(n)
   result.null = false
-  result.error = ""
-  result.hints = @[]
-
-converter to_nint*(n: NullClass): nint =
-  result.stored_value = 0
-  result.null = true
-  result.error = ""
+  result.error = ExceptionClass()
   result.hints = @[]
 
 # You cannot convert a nint to a bool
@@ -195,29 +212,22 @@ converter from_nint_to_int*(n: nint): int =
 converter from_nint_to_float*(n: nint): float = 
   result = float(n.stored_value)
 
-proc error*(n: var nint, msg: string) =
-  n.error = msg
 
 proc make_null(n: var nint) =
   n.stored_value = 0
   n.null = true
 
 proc has_error*(n: nint): bool =
-  result = n.error != ""
+  var s = deduce(n)
+  return s==state_errored
 
 proc is_null*(n: nint): bool =
   var s = deduce(n)
-  if s==state_nulled:
-    result = true
-  else:
-    result = false
+  return s==state_nulled
 
 proc is_good*(n: nint): bool =
   var s = deduce(n)
-  if s==state_valued:
-    result = true
-  else:
-    result = false
+  return s==state_valued
 
 # ###########################################
 #
@@ -243,13 +253,13 @@ proc `+`*(a: nint, b: nint): nint =
   var sa = deduce(a)
   var sb = deduce(b)
   if sa==state_errored:
-    error(result, a.error)
+    result = a
   elif sb==state_errored:
-    error(result, b.error)
+    result = b
   elif sa==state_nulled:
-    make_null(result)
+    result = null
   elif sb==state_nulled:
-    make_null(result)
+    result = null
   else:
     result.stored_value = a.stored_value + b.stored_value
   # TODO: handle hints
@@ -266,13 +276,13 @@ proc `-`*(a: nint, b: nint): nint =
   var sa = deduce(a)
   var sb = deduce(b)
   if sa==state_errored:
-    error(result, a.error)
+    result = a
   elif sb==state_errored:
-    error(result, b.error)
+    result = b
   elif sa==state_nulled:
-    make_null(result)
+    result = null
   elif sb==state_nulled:
-    make_null(result)
+    result = null
   else:
     result.stored_value = a.stored_value - b.stored_value
   # TODO: handle hints
@@ -289,13 +299,13 @@ proc `*`*(a: nint, b: nint): nint =
   var sa = deduce(a)
   var sb = deduce(b)
   if sa==state_errored:
-    error(result, a.error)
+    result = a
   elif sb==state_errored:
-    error(result, b.error)
+    result = b
   elif sa==state_nulled:
-    make_null(result)
+    result = null
   elif sb==state_nulled:
-    make_null(result)
+    result = null
   else:
     result.stored_value = a.stored_value * b.stored_value
   # TODO: handle hints
@@ -385,7 +395,7 @@ proc `==`*(a: nint, b: nint): bool =
   elif sb==state_errored:
     return false
   elif (sa==state_nulled) or (sb==state_nulled):
-    return a.null == b.null
+    return false
   else:
     return a.stored_value == b.stored_value
 
@@ -440,13 +450,13 @@ proc `div`*(dividend: nint, divisor: nint): nint =
   var sn = deduce(dividend)
   var sd = deduce(divisor)
   if sn==state_errored:
-    error(result, dividend.error)
+    result = dividend
   elif sd==state_errored:
-    error(result, divisor.error)
+    result = divisor
   elif sn==state_nulled:
-    make_null(result)
+    result = null
   elif sd==state_nulled:
-    make_null(result)
+    result = null
   else:
     result.stored_value = dividend.stored_value div divisor.stored_value
   # TODO: handle hints
