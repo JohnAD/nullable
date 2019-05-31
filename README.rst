@@ -73,7 +73,7 @@ The meaning of ``null`` is based on the ANSI SQL meaning of the word:
 
 > Null is a value that is UNKNOWN.
 
-It does NOT mean "a missing value". The semantic difference is
+It does NOT mean "no value". The semantic difference is
 subtle but very important. For example, if you where to ADD a missing value
 to the number 2, you would expect the answer to be two. After all, if something
 is not there, it implies zero. But ``null`` does not work that way. Adding
