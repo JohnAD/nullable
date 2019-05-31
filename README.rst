@@ -1,11 +1,6 @@
 Introduction to nullable
 ==============================================================================
 
-.. image:: https://raw.githubusercontent.com/yglukhov/nimble-tag/master/nimble.png
-   :height: 34
-   :width: 131
-   :alt: nimble
-
 Replacement basic nim types that can, in addition to their normal values,
 take on the values of ``null`` or ``Error``.
 
