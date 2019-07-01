@@ -46,14 +46,21 @@ type
     public
 
 type
-  NState* = enum
-    state_valued,
-    state_nulled,
-    state_errored
+  NullableKind* = enum
+    nlkValue,
+    nlkNothing,
+    nlkNull,
+    nlkError
+    # state_valued,
+    # state_nothing,
+    # state_nulled,
+    # state_errored
 
 type
   NullClass* = object
     exists: bool          # note: this field is not actually used.
+  NothingClass* = object
+    exists: bool
   Hint* = object
     msg*: string           # defaults to ""
     level*: Level          # defaults to 'lvlAll'
@@ -89,3 +96,4 @@ proc `$`*(e: ExceptionClass): string =
 
 const
   null* = NullClass(exists: true)
+  nothing* = Nothingclass(exists: true)
