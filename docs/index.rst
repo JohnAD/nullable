@@ -85,14 +85,14 @@ Some quick examples of the difference:
 .. code:: nim
 
     assert( nothing(int) == nothing(nint) )
-    assert( null(int) != null(nint) )
+    assert( null(nint) != null(nint) )
 
-    assert( (nothing(int) + 4).isError )
-    assert( (null(int) + 4) == null(int) )
+    assert( (nothing(nint) + 4).isError )
+    assert( (null(nint) + 4) == null(nint) )
 
-    var mySeq = @[-9, null(int), 3]
+    var mySeq: seq[nint] = @[-9, null(nint), 3]
     assert( count(mySeq) == 2 )
-    assert( len(mySeq)) == 3 )
+    assert( len(mySeq) == 3 )
     assert( sum(mySeq) == -6 )
 
 Simply put, an "unknown" value (``null``) cannot be assumed to be the same as another
@@ -109,19 +109,21 @@ Aggregation functions (such as ``sum`` or ``count``) simply ignore the ``nothing
       "name": "Bob",
       "grandchildren": 0,
       "windturbine_category": nothing(nstring),
-      "age": null(nstring)
+      "age": null(nstring),
+      "other": @["J", null(nint), 4, nothing(nint), 3.2]
     }
 
     let expected = """{
       "name": "Bob",
       "grandchildren": 0,
-      "age": null
+      "age": null,
+      "other": ["J", null, 4, 3.2]
     }"""
 
     assert( expected == pretty(j) )
 
- Notice that in JSON, a value that does not exist (``nothing``) is simply
- skipped. Whereas a ``null` is stored as an unknown (JSON ``null``).
+Notice that in JSON, a value that does not exist (``nothing``) is simply
+skipped. Whereas a ``null` is stored as an unknown (JSON ``null``).
 
 Downsides
 =========
