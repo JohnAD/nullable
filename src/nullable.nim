@@ -1,8 +1,8 @@
 ## Replacement basic nim types that can, in addition to their normal values,
-## take on the values of ``nothing``, ``null`` or ``Error``.
+## take on the values of ``nothing``, ``null`` or an Error object.
 ##
 ## Introduction
-## ------------
+## ============
 ##
 ## Nim has five basic types:
 ##
@@ -66,35 +66,40 @@
 ##
 ##
 ## Null vs. Nothing
-## ----------------
+## ================
 ##
 ## In general spoken language, "nothing" and "null" have similar meanings. But,
-## in this library they have very specific and explicityly different meanings:
+## in this library they have very specific and explicitly different meanings:
 ##
-## > Nothing is a non-value or a value that DOES NOT EXIST or SHOULD NOT EXIST.
+##     | Nothing is a non-value or a value that DOES NOT EXIST or SHOULD NOT EXIST.
 ##
 ## But, the meaning of ``null`` is based on the ANSI SQL meaning of the word:
 ##
-## > Null is a value that is UNKNOWN, but might be discovered one day.
+##     | Null is a value that is UNKNOWN, but might be discovered one day.
 ##
-## Two quick implacations of this:
+## Some quick examples of the difference:
 ##
 ## .. code:: nim
+## 
 ##     assert( nothing(int) == nothing(nint) )
 ##     assert( null(int) != null(nint) )
 ##
 ##     assert( (nothing(int) + 4).isError )
 ##     assert( (null(int) + 4) == null(int) )
 ##
-##     assert( sum(@[-9, null(int), 3]) == -6 )
+##     var mySeq = @[-9, null(int), 3]
+##     assert( count(mySeq) == 2 )
+##     assert( len(mySeq)) == 3 )
+##     assert( sum(mySeq) == -6 )
 ##
-## Simply put, an "unknown" value (``null``) cannot automatically be the same as another
+## Simply put, an "unknown" value (``null``) cannot be assumed to be the same as another
 ## "unknown" value. This is in keeping with the term's meaning in databases.
 ##
-## Aggregation functions (such as ``sum``) simply "skip over" the ``nothing`` or
+## Aggregation functions (such as ``sum`` or ``count``) simply ignore the ``nothing`` or
 ## ``null`` entries. This is also consistent with SQL and other database types.
 ##
 ## .. code:: nim
+## 
 ##     import nullable/json
 ## 
 ##     var j = %* {
@@ -116,7 +121,7 @@
 ##  skipped. Whereas a ``null` is stored as an unknown (JSON ``null``).
 ##
 ## Downsides
-## ---------
+## =========
 ##
 ## There are a few downsides to using this library. Most notably:
 ##
@@ -130,18 +135,25 @@
 ##   compiling.
 ##
 ## Optional Submodules
-## -------------------
+## ===================
 ##
-## **nullable/json**: adds support to the standard json library.
+## nullable/json
+## -------------
+##
+## Adds support to the standard json library.
 ##
 ## See the corresponding documentation below.
 ##
-## **nullable/object**: adds a macro for "wrapping" an object for use as a
-## nullable equivalent. Only works with objects.
+## nullable/object
+## --------------- 
+##
+## Adds a macro for "wrapping" an object for use as a nullable equivalent. Only
+## works with objects.
 ##
 ## For example:
 ##
 ## .. code:: nim
+## 
 ##     import nullable/object
 ##
 ##     type
@@ -160,7 +172,7 @@
 ## See the corresponding documentation below.
 ##
 ## Future Versions
-## ---------------
+## ===============
 ##
 ## There are two planned expansions after version 1.0.0 is released:
 ##
