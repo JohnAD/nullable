@@ -50,7 +50,7 @@ ExceptionClass
           exception_type*: string
 
 
-    *source line: 62*
+    *source line: 69*
 
 
 
@@ -66,7 +66,7 @@ Hint
           audience*: Audience    # defaults to 'ops'
 
 
-    *source line: 57*
+    *source line: 64*
 
 
 
@@ -102,18 +102,16 @@ Judgement
     (https://getbootstrap.com/)
 
 
-NState
+NothingClass
 ---------------------------------------------------------
 
     .. code:: nim
 
-        NState* = enum
-          state_valued,
-          state_nulled,
-          state_errored
+        NothingClass* = object
+          exists: bool
 
 
-    *source line: 49*
+    *source line: 62*
 
 
 
@@ -126,7 +124,27 @@ NullClass
           exists: bool          # note: this field is not actually used.
 
 
-    *source line: 55*
+    *source line: 60*
+
+
+
+NullableKind
+---------------------------------------------------------
+
+    .. code:: nim
+
+        NullableKind* = enum
+          nlkValue,
+          nlkNothing,
+          nlkNull,
+          nlkError
+          # state_valued,
+          # state_nothing,
+          # state_nulled,
+          # state_errored
+
+
+    *source line: 49*
 
 
 
@@ -145,7 +163,7 @@ Procs and Methods
 
         proc `$`*(e: ExceptionClass): string =
 
-    *source line: 67*
+    *source line: 74*
 
 
 

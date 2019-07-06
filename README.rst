@@ -1,8 +1,13 @@
 Introduction to nullable
 ==============================================================================
 
+.. image:: https://raw.githubusercontent.com/yglukhov/nimble-tag/master/nimble.png
+   :height: 34
+   :width: 131
+   :alt: nimble
+
 Replacement basic nim types that can, in addition to their normal values,
-take on the values of ``null`` or ``Error``.
+take on the values of ``nothing``, ``null`` or ``Error``.
 
 Introduction
 ------------
@@ -40,7 +45,8 @@ This library introduces replacements. The names are prefixed with the letter "n"
 - ``nfloat``
 
 The primary difference when use these, it that in addition to the traditional
-values they type can have, you can also set it them ``null`` or ``Error``.
+values they type can have, you can also set it them ``nothing``, ``null`` or
+``Error``.
 
 .. code:: nim
 
@@ -50,53 +56,72 @@ values they type can have, you can also set it them ``null`` or ``Error``.
     var my_flag: nbool = true
     var firstName: nstring
 
-    x = null                                 # storing "unknown"/null
-    x = ValueError("Something went wrong.")  # storing an error
-    x = -3                                   # store an actual integer
+    x = null                                      # storing "unknown"/null
+    x = ValueError(msg: "Something went wrong.")  # storing an error
+    x = -3                                        # store an actual integer
 
-    my_flag = null
-    firstName = IOError("Name not found.")
+    my_flag = nothing
+    firstName = IOError(msg: "Name not found.")
 
 The types largely behave like their counterparts:
 
 .. code:: nim
 
-    var z = x        # z is now a nint valued at -3
+    var x: nint = -3
+    var z = x        # z is a nint valued at -3
     z = x * 2        # z is now a nint valued at -6
     echo "z = ", z   # the message 'z = -6' displays on the screen
 
 
-The True Meaning of Null
-------------------------
+Null vs. Nothing
+----------------
 
-The meaning of ``null`` is based on the ANSI SQL meaning of the word:
+In general spoken language, "nothing" and "null" have similar meanings. But,
+in this library they have very specific and explicityly different meanings:
 
-> Null is a value that is UNKNOWN.
+> Nothing is a non-value or a value that DOES NOT EXIST or SHOULD NOT EXIST.
 
-It does NOT mean "no value". The semantic difference is
-subtle but very important. For example, if you where to ADD a missing value
-to the number 2, you would expect the answer to be two. After all, if something
-is not there, it implies zero. But ``null`` does not work that way. Adding
-2 to an unknown value is another new unknown value. The answer is "two plus
-some number we don't know." Therefore:
+But, the meaning of ``null`` is based on the ANSI SQL meaning of the word:
+
+> Null is a value that is UNKNOWN, but might be discovered one day.
+
+Two quick implacations of this:
 
 .. code:: nim
+    assert( nothing(int) == nothing(nint) )
+    assert( null(int) != null(nint) )
 
-    var a: nint = null
-    var b: nint = 2
-    var c: nint
-    c = a + b
-    echo "c = ", c
-    echo a.is_null    # this is the best way to detect null
-    echo (a == null)  # this is a tricky one: both "a" and "null" are DIFFERENT unknown values
+    assert( (nothing(int) + 4).isError )
+    assert( (null(int) + 4) == null(int) )
 
-results in an output of:
+    assert( sum(@[-9, null(int), 3]) == -6 )
 
-.. code::
+Simply put, an "unknown" value (``null``) cannot automatically be the same as another
+"unknown" value. This is in keeping with the term's meaning in databases.
 
-    c = null
-    true
-    false
+Aggregation functions (such as ``sum``) simply "skip over" the ``nothing`` or
+``null`` entries. This is also consistent with SQL and other database types.
+
+.. code:: nim
+    import nullable/json
+
+    var j = %* {
+      "name": "Bob",
+      "grandchildren": 0,
+      "windturbine_category": nothing(nstring),
+      "age": null(nstring)
+    }
+
+    let expected = """{
+      "name": "Bob",
+      "grandchildren": 0,
+      "age": null
+    }"""
+
+    assert( expected == pretty(j) )
+
+ Notice that in JSON, a value that does not exist (``nothing``) is simply
+ skipped. Whereas a ``null` is stored as an unknown (JSON ``null``).
 
 Downsides
 ---------
@@ -112,6 +137,36 @@ There are a few downsides to using this library. Most notably:
   might prevent automatic conversion. A failure message *should* be generated when
   compiling.
 
+Optional Submodules
+-------------------
+
+**nullable/json**: adds support to the standard json library.
+
+See the corresponding documentation below.
+
+**nullable/object**: adds a macro for "wrapping" an object for use as a
+nullable equivalent. Only works with objects.
+
+For example:
+
+.. code:: nim
+    import nullable/object
+
+    type
+      Person = object
+        name: nstring
+        age: nint
+
+    nullableType(Person, "nPerson")
+
+    var p: nPerson
+
+    p = nothing(nPerson)
+    p = null(nPerson)
+    p = nPerson("name": "Bob", age: null(nint))
+
+See the corresponding documentation below.
+
 Future Versions
 ---------------
 
@@ -124,7 +179,7 @@ There are two planned expansions after version 1.0.0 is released:
 
   - nint64 (aka "long")
 
-  - ndate and ntimestamp
+  - nTime
 
   - nOid
 
