@@ -94,6 +94,7 @@ proc `$`*(e: ExceptionClass): string =
   #   null: bool              # defaults to false (not null)
   #   error: string           # defaults to ""
 
-const
-  null* = NullClass(exists: true)
-  nothing* = Nothingclass(exists: true)
+# const
+#   null* = NullClass(exists: true)
+  # nothing* = Nothingclass(exists: true)
+      

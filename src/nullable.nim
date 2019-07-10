@@ -71,7 +71,7 @@
 ## In general spoken language, "nothing" and "null" have similar meanings. But,
 ## in this library they have very specific and explicitly different meanings:
 ##
-##     | Nothing is a non-value or a value that DOES NOT EXIST or SHOULD NOT EXIST.
+##     | Nothing is a non-value. It is a value that DOES NOT EXIST or SHOULD NOT EXIST.
 ##
 ## But, the meaning of ``null`` is based on the ANSI SQL meaning of the word:
 ##
@@ -81,7 +81,7 @@
 ##
 ## .. code:: nim
 ## 
-##     assert( nothing(int) == nothing(nint) )
+##     assert( nothing(nint) == nothing(nint) )
 ##     assert( null(nint) != null(nint) )
 ##
 ##     assert( (nothing(nint) + 4).isError )
@@ -120,7 +120,7 @@
 ##     assert( expected == pretty(j) )
 ##
 ## Notice that in JSON, a value that does not exist (``nothing``) is simply
-## skipped. Whereas a ``null` is stored as an unknown (JSON ``null``).
+## skipped. Whereas an unknown value (``null``) is stored as a JSON ``null``.
 ##
 ## Downsides
 ## =========
@@ -194,8 +194,10 @@
 
 import
   nullable/core as core,
-  nullable/nint as nint
+  nullable/nint as nint,
+  nullable/generic as generic
 
 export
   core,
-  nint
+  nint,
+  generic

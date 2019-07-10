@@ -2,7 +2,10 @@ import
   strutils,
   typetraits
 
-import core
+import
+  core,
+  private,
+  generic
 
 ## The ``nint`` object type represents a "nullable" integer.
 ##
@@ -116,82 +119,12 @@ type
     of nlkNull:
       discard
     of nlkError:
-      error: ExceptionClass
+      error*: ExceptionClass
     hints: seq[Hint]
 
 {.hint[XDeclaredButNotUsed]:off.}
 
-proc `$`*(n: nint): string = 
-  case n.kind:
-  of nlkValue:
-    result = $n.stored_value
-  of nlkNothing:
-    result = "nothing"
-  of nlkNull:
-    result = "null"
-  of nlkError:
-    result = $n.error
-
-proc repr*(n: nint): string = 
-  result = "nint("
-  case n.kind:
-  of nlkValue:
-    result &= "value:" & $n.stored_value
-  of nlkNothing:
-    result &= "nothing"
-  of nlkNull:
-    result &= "null"
-  of nlkError:
-    result &= $n.error
-  result &= ")"
-
-proc `=`*(n: var nint, src: nint) = 
-  case src.kind:
-  of nlkValue:
-    n = nint(kind: nlkValue, stored_value: src.stored_value)
-  of nlkNothing:
-    n = nint(kind: nlkNothing)
-  of nlkNull:
-    n = nint(kind: nlkNull)
-  of nlkError:
-    n = nint(kind: nlkError, error: src.error)
-  n.hints = src.hints
-
-converter to_nint*(n: NothingClass): nint =
-  result = nint(kind: nlkNothing)
-
-converter to_nint*(n: NullClass): nint =
-  result = nint(kind: nlkNull)
-
-converter to_nint*(e: IOError): nint =
-  result = nint(kind: nlkError)
-  result.error.msg = e.msg
-  result.error.flag = true
-  result.error.exception_type = name(type(e))
-
-converter to_nint*(e: OSError): nint =
-  result = nint(kind: nlkError)
-  result.error.msg = e.msg
-  result.error.flag = true
-  result.error.exception_type = name(type(e))
-
-converter to_nint*(e: ResourceExhaustedError): nint =
-  result = nint(kind: nlkError)
-  result.error.msg = e.msg
-  result.error.flag = true
-  result.error.exception_type = name(type(e))
-
-converter to_nint*(e: ValueError): nint =
-  result = nint(kind: nlkError)
-  result.error.msg = e.msg
-  result.error.flag = true
-  result.error.exception_type = name(type(e))
-
-converter to_nint*(e: ArithmeticError): nint =
-  result = nint(kind: nlkError)
-  result.error.msg = e.msg
-  result.error.flag = true
-  result.error.exception_type = name(type(e))
+generate_generic_handling(nint, int)
 
 # You cannot convert a bool to a nint
 # converter to_nint*(n: bool): nint = 
@@ -204,7 +137,7 @@ converter to_nint*(n: string): nint =
     result = nint(kind: nlkValue)
     result.stored_value = parseInt(n)
   except ValueError:
-    result = ValueError(msg: "Could not convert string to nint.")
+    result.setError(ValueError(msg: "Could not convert string to nint."))
 
 converter to_nint*(n: int): nint = 
   result = nint(kind: nlkValue)
@@ -253,66 +186,6 @@ proc make_null(n: var nint) =
   ## Force the nint into a null state
   n = nint(kind: nlkNull, hints: n.hints)
 
-proc has_error*(n: nint): bool =
-  ## Check to see if n has an error associated with it.
-  ##
-  ## .. code:: nim
-  ##
-  ##     var a: nint = ValueError("Too small.")
-  ##     if a.has_error:
-  ##       echo "Error found: " & $a
-  ##
-  case n.kind:
-  of nlkError:
-    return true
-  else:
-    return false
-
-proc is_nothing*(n: nint): bool =
-  ## Check to see if n is unknown (a null).
-  ##
-  ## .. code:: nim
-  ##
-  ##     var a: nint = null
-  ##     if a.is_null:
-  ##       echo "It is null."
-  ##
-  case n.kind:
-  of nlkNothing:
-    return true
-  else:
-    return false
-
-proc is_null*(n: nint): bool =
-  ## Check to see if n is unknown (a null).
-  ##
-  ## .. code:: nim
-  ##
-  ##     var a: nint = null
-  ##     if a.is_null:
-  ##       echo "It is null."
-  ##
-  case n.kind:
-  of nlkNull:
-    return true
-  else:
-    return false
-
-proc has_value*(n: nint): bool =
-  ## Check to see if n has a legitimate number. In other words, it verifies that it is not 'null' and it does not
-  ## have an error. A newly declared ``nint`` defaults to 0 (zero) and is good.
-  ##
-  ## .. code:: nim
-  ##
-  ##     var a: nint = 5
-  ##     if a.is_good:
-  ##       echo "a = " & $a
-  ##
-  case n.kind:
-  of nlkValue:
-    return true
-  else:
-    return false
 
 # ###########################################
 #
@@ -332,21 +205,37 @@ proc `+`*(a: nint, b: nint): nint =
   ## Represented by the plus "+" symbol, this operation adds two nint
   ## values together.
   ##
-  ## If either value is ``null`` or errored, the result is an error.
+  ## If either value is errored, the result is an error.
+  ## If either value is null, the result is null.
+  ## if one value is ``nothing``, the nothing is treated as zero
+  ## if both values are nothing, the result is nothing
   ##
   ## returns a new ``nint``
-  var sa = a.kind
-  var sb = b.kind
-  if sa==nlkError:
+  case a.kind:
+  of nlkError:
     result = a
-  elif sb==nlkError:
-    result = b
-  elif sa==nlkNull:
-    result = null
-  elif sb==nlkNull:
-    result = null
-  else:
-    result.stored_value = a.stored_value + b.stored_value
+  of nlkNull:
+    result = null(int)
+  of nlkNothing:
+    case b.kind:
+    of nlkError:
+      result = b
+    of nlkNull:
+      result = null(int)
+    of nlkNothing:
+      result = nothing(int)
+    of nlkValue:
+      result = b
+  of nlkValue:
+    case b.kind:
+    of nlkError:
+      result = b
+    of nlkNull:
+      result = null(int)
+    of nlkNothing:
+      result = a
+    of nlkValue:
+      result.stored_value = a.stored_value + b.stored_value
   # TODO: handle hints
 
 proc `-`*(a: nint, b: nint): nint =
@@ -355,21 +244,37 @@ proc `-`*(a: nint, b: nint): nint =
   ## Represented by the minus "-" symbol, this operation subtracts two nint
   ## values from each other.
   ##
-  ## If either value is ``null`` or errored, the result is an error.
+  ## If either value is errored, the result is an error.
+  ## If either value is null, the result is null.
+  ## if one value is ``nothing``, the nothing is treated as zero
+  ## if both values are nothing, the result is nothing
   ##
   ## returns a new ``nint``
-  var sa = a.kind
-  var sb = b.kind
-  if sa==nlkError:
+  case a.kind:
+  of nlkError:
     result = a
-  elif sb==nlkError:
-    result = b
-  elif sa==nlkNull:
-    result = null
-  elif sb==nlkNull:
-    result = null
-  else:
-    result.stored_value = a.stored_value - b.stored_value
+  of nlkNull:
+    result = null(int)
+  of nlkNothing:
+    case b.kind:
+    of nlkError:
+      result = b
+    of nlkNull:
+      result = null(int)
+    of nlkNothing:
+      result = nothing(int)
+    of nlkValue:
+      result.stored_value = 0 - b.stored_value
+  of nlkValue:
+    case b.kind:
+    of nlkError:
+      result = b
+    of nlkNull:
+      result = null(int)
+    of nlkNothing:
+      result.stored_value = a.stored_value
+    of nlkValue:
+      result.stored_value = a.stored_value - b.stored_value
   # TODO: handle hints
 
 proc `*`*(a: nint, b: nint): nint =
@@ -378,21 +283,28 @@ proc `*`*(a: nint, b: nint): nint =
   ## Represented by the asterisk "*" symbol, this operation multiplies two nint
   ## values together.
   ##
-  ## If either value is ``null`` or errored, the result is an error.
+  ## If either value is errored, the result is an error.
+  ## If either value is null, the result is null.
+  ## if either value is ``nothing``, the results is zero.
   ##
   ## returns a new ``nint``
-  var sa = a.kind
-  var sb = b.kind
-  if sa==nlkError:
+  case a.kind:
+  of nlkError:
     result = a
-  elif sb==nlkError:
-    result = b
-  elif sa==nlkNull:
-    result = null
-  elif sb==nlkNull:
-    result = null
-  else:
-    result.stored_value = a.stored_value * b.stored_value
+  of nlkNull:
+    result = null(int)
+  of nlkNothing:
+    result = 0
+  of nlkValue:
+    case b.kind:
+    of nlkError:
+      result = b
+    of nlkNull:
+      result = null(int)
+    of nlkNothing:
+      result = 0
+    of nlkValue:
+      result.stored_value = a.stored_value * b.stored_value
   # TODO: handle hints
 
 # TODO: handle this when nfloat is working? Or will nfloat convert automatically?
@@ -425,21 +337,23 @@ proc `<`*(a: nint, b: nint): bool =
   ## Operator: LESS-THAN
   ##
   ## Represented by the angle-bracket "<" symbol, this operation compares two
-  ## ``nint`` values.
+  ## values.
   ##
-  ## If either value is ``null``, the result is false
-  ## If either value is ``error``, the result is false.
-  var sa = a.kind
-  var sb = b.kind
-  if sa==nlkError:
+  ## If a is ``Nothing``, and b has a value, then the results is always true.
+  ## If either value is ``null`` or ``error``, the result is false
+  if a.kind == nlkNothing:
+    if b.kind == nlkValue:
+      return true
+  if a.kind != b.kind:
     return false
-  elif sb==nlkError:
+  case a.kind:
+  of nlkError:
     return false
-  elif sa==nlkNull:
+  of nlkNull:
     return false
-  elif sb==nlkNull:
+  of nlkNothing:
     return false
-  else:
+  of nlkValue:
     return a.stored_value < b.stored_value
 
 # TODO: handle this when nbool is working?
@@ -447,21 +361,23 @@ proc `>`*(a: nint, b: nint): bool =
   ## Operator: GREATER-THAN
   ##
   ## Represented by the angle-bracket "<" symbol, this operation compares two
-  ## ``nint`` values.
+  ## values.
   ##
-  ## If either value is ``null``, the result is false.
-  ## If either value is ``error``, the result is false.
-  var sa = a.kind
-  var sb = b.kind
-  if sa==nlkError:
+  ## If a has a value and b is ``Nothing``, then the result is always true.
+  ## If either value is ``null`` or ``error``, the result is false.
+  if b.kind == nlkNothing:
+    if a.kind == nlkValue:
+      return true
+  if a.kind != b.kind:
     return false
-  elif sb==nlkError:
+  case a.kind:
+  of nlkError:
     return false
-  elif sa==nlkNull:
+  of nlkNull:
     return false
-  elif sb==nlkNull:
+  of nlkNothing:
     return false
-  else:
+  of nlkValue:
     return a.stored_value > b.stored_value
 
 # # TODO: handle this when nbool is working ?
@@ -471,31 +387,32 @@ proc `==`*(a: nint, b: nint): bool =
   ## Represented by two equal symbols "==" symbol, this operation compares two
   ## ``nint`` values.
   ##
-  ## If both values are ``null``, the result is true. If only one, then false.
+  ## If either value is null, then it returns false.
   ## If either value is ``error``, the result is false.
-  var sa = a.kind
-  var sb = b.kind
-  if sa==nlkError:
+  ## If both are nothing, then true. If only one is nothing, then false.
+  if a.kind != b.kind:
     return false
-  elif sb==nlkError:
+  case a.kind:
+  of nlkError:
     return false
-  elif (sa==nlkNull) or (sb==nlkNull):
+  of nlkNull:
     return false
-  else:
+  of nlkNothing:
+    return true
+  of nlkValue:
     return a.stored_value == b.stored_value
 
 proc `==`*(a: nint, b: int): bool =
   ## Operator: EQUAL-TO (nint vs int)
   ##
   ## Represented by two equal symbols "==" symbol, this operation compares two
-  ## ``nint`` values.
-  ##
-  ## If both values are ``null``, the result is true. If only one, then false.
-  ## If either value is ``error``, the result is false.
+  ## values.
   case a.kind:
   of nlkError:
     return false
   of nlkNull:
+    return false
+  of nlkNothing:
     return false
   else:
     return a.stored_value == b
@@ -504,14 +421,13 @@ proc `==`*(a: int, b: nint): bool =
   ## Operator: EQUAL-TO (int vs nint)
   ##
   ## Represented by two equal symbols "==" symbol, this operation compares two
-  ## ``nint`` values.
-  ##
-  ## If both values are ``null``, the result is true. If only one, then false.
-  ## If either value is ``error``, the result is false.
+  ## values.
   case b.kind:
   of nlkError:
     return false
   of nlkNull:
+    return false
+  of nlkNothing:
     return false
   else:
     return a == b.stored_value
@@ -537,14 +453,14 @@ proc `div`*(dividend: nint, divisor: nint): nint =
     case divisor.kind:
     of nlkValue:
       if divisor.stored_value == 0:
-        result = to_nint(DivByZeroError(msg: "Cannot divide by zero."))
+        result.setError(DivByZeroError(msg: "Cannot divide by zero."))
       else:
         result = nint(kind: nlkValue)
         result.stored_value = dividend.stored_value div divisor.stored_value
     else:
-      result = to_nint(ValueError(msg: "Cannot divide by nothing, null, or error."))
+      result.setError(ValueError(msg: "Cannot divide by nothing, null, or error."))
   else:
-    result = to_nint(ValueError(msg: "Nothing, null, or error cannot be divided by."))
+    result.setError(ValueError(msg: "Nothing, null, or error cannot be divided by."))
   # TODO: handle hints
 
 # BUGGY, but don't know why yet
