@@ -67,15 +67,25 @@ type
     judgement*: Judgement  # defaults to 'info'
     audience*: Audience    # defaults to 'ops'
   ExceptionClass* = object
-    flag*: bool
     msg*: string
     exception_type*: string
+    trace*: string
+
+template setError*(n: untyped, e: untyped): untyped =
+  let pos  = instantiationInfo()
+  actualSetError(n, e, $pos)
+
 
 proc `$`*(e: ExceptionClass): string = 
-  if e.flag:
-    result = "error($1, $2)".format(e.exception_type, e.msg)
-  else:
-    result = "error(none)"
+  result = "$1($2)".format(e.exception_type, e.msg)
+
+proc error_repr*(err_list: seq[ExceptionClass]): string =
+  result &= "@[\n"
+  for err in err_list:
+      result &= "  $1($2) at $3\n".format(err.exception_type, err.msg, err.trace)
+  result &= "]"
+
+
 
   # nbool* = object
   #   stored_value: bool      # defaults to false

@@ -19,7 +19,7 @@ template generate_generic_handling*(target, typ: untyped): untyped =
     of nlkNull:
       result = "null"
     of nlkError:
-      result = $n.error
+      result = $n.errors
 
   proc repr*(n: target): string = 
     result = name(target) & "("
@@ -31,7 +31,7 @@ template generate_generic_handling*(target, typ: untyped): untyped =
     of nlkNull:
       result &= "null"
     of nlkError:
-      result &= $n.error
+      result &= error_repr(n.errors)
     result &= ")"
 
   proc `=`*(n: var target, src: target) = 
@@ -43,7 +43,7 @@ template generate_generic_handling*(target, typ: untyped): untyped =
     of nlkNull:
       n = target(kind: nlkNull)
     of nlkError:
-      n = target(kind: nlkError, error: src.error)
+      n = target(kind: nlkError, errors: src.errors)
     n.hints = src.hints
 
     # TODO: add explicit 'get()'
@@ -58,13 +58,22 @@ template generate_generic_handling*(target, typ: untyped): untyped =
       result.stored_value = n.get()
     if n.has_error:
       result = target(kind: nlkError)
-      result.error = n.error
+      result.errors = n.errors
 
-  proc setError*(n: var target, e: ValidErrors) =
-    n = target(kind: nlkError)
-    n.error.msg = e.msg
-    n.error.flag = true
-    n.error.exception_type = name(type(e))
+  proc actualSetError*(n: var target, e: ValidErrors, loc: string) =
+    if n.kind != nlkError:
+      n = target(kind: nlkError)
+    var newErr = ExceptionClass()
+    newErr.msg = e.msg
+    newErr.exception_type = name(type(e))
+    newErr.trace = loc
+    n.errors.add newErr
+
+  proc actualSetError*(n: var target, e: target, loc: string) =
+    if n.kind != nlkError:
+      n = target(kind: nlkError)
+    n.errors &= e.errors
+
 
   proc has_error*(n: target): bool =
     ## Check to see if n has an error associated with it.

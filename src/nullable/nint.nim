@@ -119,7 +119,7 @@ type
     of nlkNull:
       discard
     of nlkError:
-      error*: ExceptionClass
+      errors*: seq[ExceptionClass]
     hints: seq[Hint]
 
 {.hint[XDeclaredButNotUsed]:off.}

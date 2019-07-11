@@ -12,13 +12,11 @@ suite "nullable nint type":
   test "nint error assignment":
     var c: nint
     c.setError(ValueError(msg: "something wrong"))
-    check $c == "error(ValueError, something wrong)"
+    check $c == "@[ValueError(something wrong)]"
     c.setError(IOError(msg: "something wrong"))
-    check $c == "error(IOError, something wrong)"
+    check $c == "@[ValueError(something wrong), IOError(something wrong)]"
     c.setError(OSError(msg: "something wrong"))
-    check $c == "error(OSError, something wrong)"
-    c.setError(ResourceExhaustedError(msg: "something wrong"))
-    check $c == "error(ResourceExhaustedError, something wrong)"
+    check $c == "@[ValueError(something wrong), IOError(something wrong), OSError(something wrong)]"
   test "nint printing":
     let a: nint = "-3"
     check $a == -3
@@ -28,8 +26,8 @@ suite "nullable nint type":
     check repr(b) == "nint(null)"
     var c: nint
     c.setError(ValueError(msg: "something wrong"))
-    check $c == "error(ValueError, something wrong)"
-    check repr(c) == "nint(error(ValueError, something wrong))"
+    check $c == "@[ValueError(something wrong)]"
+    check repr(c) == "nint(@[\n  ValueError(something wrong) at (filename: \"/home/johnad/Projects/nullable/tests/tnint.nim\", line: 28, column: 5)\n])"
     let d: nint = nothing(int)
     check $d == "nothing"
     check repr(d) == "nint(nothing)"

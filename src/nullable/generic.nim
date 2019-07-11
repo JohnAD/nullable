@@ -22,7 +22,7 @@ type
     of nlkNull:
       discard
     of nlkError:
-      error*: ExceptionClass
+      errors*: seq[ExceptionClass]
     hints: seq[Hint]
 
 
@@ -35,7 +35,7 @@ proc `$`*[T](n: Nullable[T]): string =
   of nlkNull:
     result = "null"
   of nlkError:
-    result = $n.error
+    result = $n.errors
 
 proc get*[T](n: Nullable[T]): T =
   if n.kind == nlkValue: 
@@ -54,7 +54,7 @@ proc repr*[T](n: Nullable[T]): string =
   of nlkNull:
     result &= "(null)"
   of nlkError:
-    result &= $n.error
+    result &= error_repr(n.errors)
 
 
 template nothing*(T: untyped): untyped =
@@ -63,11 +63,21 @@ template nothing*(T: untyped): untyped =
 template null*(T: untyped): untyped =
   Nullable[T](kind: nlkNull)
 
-proc setError*[T](n: var Nullable[T], e: ValidErrors) =
-  n = Nullable[T](kind: nlkError)
-  n.error.msg = e.msg
-  n.error.flag = true
-  n.error.exception_type = name(type(e))
+
+proc actualSetError*[T](n: var Nullable[T], e: ValidErrors, loc: string) =
+  if n.kind != nlkError:
+    n = Nullable[T](kind: nlkError)
+  var newErr = ExceptionClass()
+  newErr.msg = e.msg
+  newErr.exception_type = name(type(e))
+  newErr.trace = loc
+  n.errors.add newErr
+
+proc actualSetError*[T](n: var Nullable[T], e: Nullable[T], loc: string) =
+  if n.kind != nlkError:
+    n = Nullable[T](kind: nlkError)
+  n.errors &= e.errors
+
 
 converter to_nullable_type*[T](n: T): Nullable[T] = 
   result = Nullable[T](kind: nlkValue)
