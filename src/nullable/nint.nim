@@ -83,44 +83,44 @@ import
 ##     a = a + 2.nint
 ##
 
-type
-  nint* = object
-    ## The object used to represent the ``nint`` data type.
-    ##
-    ## Please note that elements are not directly accessible. You cannot
-    ## do this:
-    ##
-    ## .. code:: nim
-    ##
-    ##     var a: nint = 3
-    ##     echo "a = ", $a.stored_value
-    ##
-    ## that will generate a compiler error. Instead, rely on the libraries
-    ## ability to convert and adjust as needed. So, simply:
-    ##
-    ## .. code:: nim
-    ##
-    ##     var a: nint = 3
-    ##     echo "a = ", $a
-    ##
-    ## or possibly:
-    ##
-    ## .. code:: nim
-    ##
-    ##     var a: nint = 3
-    ##     var b: int = a
-    ##     echo "b = ", $b
-    ##
-    case kind: NullableKind
-    of nlkValue:
-      stored_value: int
-    of nlkNothing:
-      discard
-    of nlkNull:
-      discard
-    of nlkError:
-      errors*: seq[ExceptionClass]
-    hints: seq[Hint]
+# type
+#   nint* = object
+#     ## The object used to represent the ``nint`` data type.
+#     ##
+#     ## Please note that elements are not directly accessible. You cannot
+#     ## do this:
+#     ##
+#     ## .. code:: nim
+#     ##
+#     ##     var a: nint = 3
+#     ##     echo "a = ", $a.stored_value
+#     ##
+#     ## that will generate a compiler error. Instead, rely on the libraries
+#     ## ability to convert and adjust as needed. So, simply:
+#     ##
+#     ## .. code:: nim
+#     ##
+#     ##     var a: nint = 3
+#     ##     echo "a = ", $a
+#     ##
+#     ## or possibly:
+#     ##
+#     ## .. code:: nim
+#     ##
+#     ##     var a: nint = 3
+#     ##     var b: int = a
+#     ##     echo "b = ", $b
+#     ##
+#     case kind: NullableKind
+#     of nlkValue:
+#       stored_value: int
+#     of nlkNothing:
+#       discard
+#     of nlkNull:
+#       discard
+#     of nlkError:
+#       errors*: seq[ExceptionClass]
+#     hints: seq[Hint]
 
 {.hint[XDeclaredButNotUsed]:off.}
 

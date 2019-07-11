@@ -195,9 +195,11 @@
 import
   nullable/core as core,
   nullable/nint as nint,
+  nullable/nstring as nstring,
   nullable/generic as generic
 
 export
   core,
   nint,
+  nstring,
   generic

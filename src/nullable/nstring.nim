@@ -53,46 +53,46 @@ import
 ##     a.setError(ValueError(msg: "something went wrong"))
 ## 
 
-type
-  nstring* = object
-    ## The object used to represent the ``nstring`` data type.
-    ##
-    ## Please note that elements are not directly accessible. You cannot
-    ## do this:
-    ##
-    ## .. code:: nim
-    ##
-    ##     var a: nstring = "hello"
-    ##     echo "a = ", a.stored_value
-    ##
-    ## that will generate a compiler error. Instead, rely on the libraries
-    ## ability to convert and adjust as needed. So, simply:
-    ##
-    ## .. code:: nim
-    ##
-    ##     var a: nstring = "hello"
-    ##     echo "a = ", a
-    ##
-    ## or possibly:
-    ##
-    ## .. code:: nim
-    ##
-    ##     var a: nstring = "hello"
-    ##     var b: string = a
-    ##     echo "b = ", b
-    ##
-    ##     echo "a = ", a.get()  # also works. ``get`` returns a string
-    ##
-    case kind: NullableKind
-    of nlkValue:
-      stored_value: string
-    of nlkNothing:
-      discard
-    of nlkNull:
-      discard
-    of nlkError:
-      errors*: seq[ExceptionClass]
-    hints: seq[Hint]
+# type
+#   nstring* = object
+#     ## The object used to represent the ``nstring`` data type.
+#     ##
+#     ## Please note that elements are not directly accessible. You cannot
+#     ## do this:
+#     ##
+#     ## .. code:: nim
+#     ##
+#     ##     var a: nstring = "hello"
+#     ##     echo "a = ", a.stored_value
+#     ##
+#     ## that will generate a compiler error. Instead, rely on the libraries
+#     ## ability to convert and adjust as needed. So, simply:
+#     ##
+#     ## .. code:: nim
+#     ##
+#     ##     var a: nstring = "hello"
+#     ##     echo "a = ", a
+#     ##
+#     ## or possibly:
+#     ##
+#     ## .. code:: nim
+#     ##
+#     ##     var a: nstring = "hello"
+#     ##     var b: string = a
+#     ##     echo "b = ", b
+#     ##
+#     ##     echo "a = ", a.get()  # also works. ``get`` returns a string
+#     ##
+#     case kind: NullableKind
+#     of nlkValue:
+#       stored_value: string
+#     of nlkNothing:
+#       discard
+#     of nlkNull:
+#       discard
+#     of nlkError:
+#       errors*: seq[ExceptionClass]
+#     hints: seq[Hint]
 
 {.hint[XDeclaredButNotUsed]:off.}
 
@@ -223,6 +223,25 @@ proc `==`*(a: nstring, b: nstring): bool =
   of nlkValue:
     return a.stored_value == b.stored_value
 
+proc `==`*(a: nstring, b: string): bool =
+  ## Operator: EQUAL-TO (nstring vs nstring)
+  ##
+  ## Represented by two equal symbols "==" symbol, this operation compares two
+  ## ``nstring`` values.
+  ##
+  ## If a is null, then it returns false.
+  ## If a is ``error``, the result is false.
+  ## If a is nothing, then false.
+  case a.kind:
+  of nlkError:
+    return false
+  of nlkNull:
+    return false
+  of nlkNothing:
+    return false
+  of nlkValue:
+    return a.stored_value == b
+
 # The '@' operator has no meaning to nstring
 
 # The '~' operator has no meaning to nstring
@@ -257,7 +276,6 @@ proc `&`*(a: nstring, b: nstring): nstring =
       result = a
     of nlkValue:
       result = b
-    return false
   of nlkValue:
     case b.kind:
     of nlkError, nlkNull:

@@ -10,6 +10,20 @@ type
   ValidErrors* = ValueError | ArithmeticError | ResourceExhaustedError | OSError | IOError
 
 template generate_generic_handling*(target, typ: untyped): untyped =
+
+  type
+    target* = object
+      case kind: NullableKind
+      of nlkValue:
+        stored_value: typ
+      of nlkNothing:
+        discard
+      of nlkNull:
+        discard
+      of nlkError:
+        errors*: seq[ExceptionClass]
+      hints: seq[Hint]
+
   proc `$`*(n: target): string = 
     case n.kind:
     of nlkValue:
