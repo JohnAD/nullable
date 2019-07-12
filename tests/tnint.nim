@@ -2,6 +2,11 @@ import unittest
 
 import nullable
 
+type
+  User = object
+    age: nint
+
+
 suite "nullable nint type":
   test "nint assignment":
     let a: nint = -3
@@ -17,6 +22,13 @@ suite "nullable nint type":
     check $c == "@[ValueError(something wrong), IOError(something wrong)]"
     c.setError(OSError(msg: "something wrong"))
     check $c == "@[ValueError(something wrong), IOError(something wrong), OSError(something wrong)]"
+  test "object assignement":
+    var a: User
+    a = User(age: 33)
+    check a.age == 33
+    check a.age.get_value == 33
+    a = User(age: null(int))
+    check a.age.is_null
   test "nint printing":
     let a: nint = "-3"
     check $a == -3
@@ -27,7 +39,7 @@ suite "nullable nint type":
     var c: nint
     c.setError(ValueError(msg: "something wrong"))
     check $c == "@[ValueError(something wrong)]"
-    check repr(c) == "nint(@[\n  ValueError(something wrong) at (filename: \"/home/johnad/Projects/nullable/tests/tnint.nim\", line: 28, column: 5)\n])"
+    check repr(c) == "nint(@[\n  ValueError(something wrong) at (filename: \"/home/johnad/Projects/nullable/tests/tnint.nim\", line: 40, column: 5)\n])"
     let d: nint = nothing(int)
     check $d == "nothing"
     check repr(d) == "nint(nothing)"

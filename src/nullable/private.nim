@@ -60,7 +60,12 @@ template generate_generic_handling*(target, typ: untyped): untyped =
       n = target(kind: nlkError, errors: src.errors)
     n.hints = src.hints
 
-    # TODO: add explicit 'get()'
+  proc get_value*(n: target): typ =
+    case n.kind:
+    of nlkValue:
+      result = n.stored_value
+    else:
+      raise newException(ValueError, "current state of variable does not have a value to get")
 
   converter to_target*(n: Nullable[typ]): target =
     if n.is_null:
