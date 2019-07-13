@@ -1,7 +1,7 @@
-nullable/core Reference
+nullable/private Reference
 ==============================================================================
 
-The following are the references for nullable/core.
+The following are the references for nullable/private.
 
 
 
@@ -10,141 +10,15 @@ Types
 
 
 
-Audience
+ValidErrors
 ---------------------------------------------------------
 
     .. code:: nim
 
-        Audience* = enum
-          ops,
-          admin,
-          user,
-          public
+        ValidErrors* = ValueError | ArithmeticError | ResourceExhaustedError | OSError | IOError
 
 
-    *source line: 29*
-
-    Distribution limits for news of a hint.
-    
-    ops
-      only seen by those with server/system maintainer clearance
-    
-    admin
-      only seen by end-users with admin clearance (and ops)
-    
-    user
-      only seen by regular users (and admin and ops)
-    
-    public
-      the whole world (no restrictions)
-
-
-ExceptionClass
----------------------------------------------------------
-
-    .. code:: nim
-
-        ExceptionClass* = object
-          msg*: string
-          exception_type*: string
-          trace*: string
-
-
-    *source line: 69*
-
-
-
-Hint
----------------------------------------------------------
-
-    .. code:: nim
-
-        Hint* = object
-          msg*: string           # defaults to ""
-          level*: Level          # defaults to 'lvlAll'
-          judgement*: Judgement  # defaults to 'info'
-          audience*: Audience    # defaults to 'ops'
-
-
-    *source line: 64*
-
-
-
-Judgement
----------------------------------------------------------
-
-    .. code:: nim
-
-        Judgement* = enum
-          info,
-          success,
-          warning,
-          danger
-
-
-    *source line: 8*
-
-    Category of judgement for a hint.
-    
-    info
-        neutral (but ok if forced to judge)
-    
-    success
-        ok
-    
-    warning
-        ok; but with reservations
-    
-    danger
-        not ok
-    
-    These categories are inspired by the Bootstrap framework
-    (https://getbootstrap.com/)
-
-
-NothingClass
----------------------------------------------------------
-
-    .. code:: nim
-
-        NothingClass* = object
-          exists: bool
-
-
-    *source line: 62*
-
-
-
-NullClass
----------------------------------------------------------
-
-    .. code:: nim
-
-        NullClass* = object
-          exists: bool          # note: this field is not actually used.
-
-
-    *source line: 60*
-
-
-
-NullableKind
----------------------------------------------------------
-
-    .. code:: nim
-
-        NullableKind* = enum
-          nlkValue,
-          nlkNothing,
-          nlkNull,
-          nlkError
-          # state_valued,
-          # state_nothing,
-          # state_nulled,
-          # state_errored
-
-
-    *source line: 49*
+    *source line: 10*
 
 
 
@@ -161,20 +35,141 @@ Procs and Methods
 
     .. code:: nim
 
-        proc `$`*(e: ExceptionClass): string =
+        proc `$`*(n: target): string =
 
-    *source line: 79*
+    *source line: 27*
 
 
 
-error_repr
+`=`
 ---------------------------------------------------------
 
     .. code:: nim
 
-        proc error_repr*(err_list: seq[ExceptionClass]): string =
+        proc `=`*(n: var target, src: target) =
+
+    *source line: 51*
+
+
+
+actualSetError
+---------------------------------------------------------
+
+    .. code:: nim
+
+        proc actualSetError*(n: var target, e: ValidErrors, loc: string) =
 
     *source line: 82*
+
+
+
+actualSetError
+---------------------------------------------------------
+
+    .. code:: nim
+
+        proc actualSetError*(n: var target, e: target, loc: string) =
+
+    *source line: 91*
+
+
+
+get_value
+---------------------------------------------------------
+
+    .. code:: nim
+
+        proc get_value*(n: target): typ =
+
+    *source line: 63*
+
+
+
+has_error
+---------------------------------------------------------
+
+    .. code:: nim
+
+        proc has_error*(n: target): bool =
+
+    *source line: 97*
+
+    Check to see if n has an error associated with it.
+    
+    .. code:: nim
+    
+        var a: nint = ValueError("Too small.")
+        if a.has_error:
+          echo "Error found: " & $a
+    
+
+
+has_value
+---------------------------------------------------------
+
+    .. code:: nim
+
+        proc has_value*(n: target): bool =
+
+    *source line: 142*
+
+    Check to see if n has a legitimate number. In other words, it verifies that it is not 'null' and it does not
+    have an error. A newly declared ``nint`` defaults to 0 (zero) and is good.
+    
+    .. code:: nim
+    
+        var a: nint = 5
+        if a.is_good:
+          echo "a = " & $a
+    
+
+
+is_nothing
+---------------------------------------------------------
+
+    .. code:: nim
+
+        proc is_nothing*(n: target): bool =
+
+    *source line: 112*
+
+    Check to see if n is unknown (a null).
+    
+    .. code:: nim
+    
+        var a: nint = null
+        if a.is_null:
+          echo "It is null."
+    
+
+
+is_null
+---------------------------------------------------------
+
+    .. code:: nim
+
+        proc is_null*(n: target): bool =
+
+    *source line: 127*
+
+    Check to see if n is unknown (a null).
+    
+    .. code:: nim
+    
+        var a: nint = null
+        if a.is_null:
+          echo "It is null."
+    
+
+
+repr
+---------------------------------------------------------
+
+    .. code:: nim
+
+        proc repr*(n: target): string =
+
+    *source line: 38*
 
 
 

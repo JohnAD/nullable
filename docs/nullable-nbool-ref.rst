@@ -1,5 +1,79 @@
-nullable/core General Documentation
+nullable/nbool Reference
 ==============================================================================
+
+The following are the references for nullable/nbool.
+
+
+
+
+
+
+Procs and Methods
+=================
+
+
+`!`
+---------------------------------------------------------
+
+    .. code:: nim
+
+        proc `!`*(a: nbool): bool =
+
+    *source line: 249*
+
+    Operator: NOT (bool)
+    
+
+
+`==`
+---------------------------------------------------------
+
+    .. code:: nim
+
+        proc `==`*(a: bool, b: nbool): bool =
+
+    *source line: 222*
+
+    Operator: EQUAL-TO (bool vs nbool)
+    
+    Represented by two equal symbols "==" symbol, this operation compares two
+    values.
+
+
+`==`
+---------------------------------------------------------
+
+    .. code:: nim
+
+        proc `==`*(a: nbool, b: bool): bool =
+
+    *source line: 207*
+
+    Operator: EQUAL-TO (nbool vs bool)
+    
+    Represented by two equal symbols "==" symbol, this operation compares two
+    values.
+
+
+`==`
+---------------------------------------------------------
+
+    .. code:: nim
+
+        proc `==`*(a: nbool, b: nbool): bool =
+
+    *source line: 186*
+
+    Operator: EQUAL-TO (nbool vs nbool)
+    
+    Represented by two equal symbols "==" symbol, this operation compares two
+    ``nbool`` values.
+    
+    If either value is null, then it returns false.
+    If either value is ``error``, the result is false.
+    If both are nothing, then true. If only one is nothing, then false.
+
+
 
 
 

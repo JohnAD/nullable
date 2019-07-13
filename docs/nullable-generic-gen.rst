@@ -1,4 +1,4 @@
-nullable/core General Documentation
+nullable/generic General Documentation
 ==============================================================================
 
 

@@ -24,6 +24,12 @@ Nim has five basic types:
 
 - ``float`` (aka float64)
 
+plus from the libraries:
+
+- ``Time``
+
+- ``Oid``
+
 Examples of their use:
 
 .. code:: nim
@@ -44,9 +50,13 @@ This library introduces replacements. The names are prefixed with the letter "n"
 
 - ``nfloat``
 
+- ``nTime``
+
+- ``nOid``
+
 The primary difference when use these, it that in addition to the traditional
-values they type can have, you can also set it them ``nothing``, ``null`` or
-``Error``.
+values they type can have, you can also set it them to ``nothing``, ``null``
+or an ``Error``.
 
 .. code:: nim
 
@@ -79,7 +89,7 @@ Null vs. Nothing
 In general spoken language, "nothing" and "null" have similar meanings. But,
 in this library they have very specific and explicitly different meanings:
 
-    | Nothing is a non-value or a value that DOES NOT EXIST or SHOULD NOT EXIST.
+    | Nothing is a non-value. It is a value that DOES NOT EXIST or SHOULD NOT EXIST.
 
 But, the meaning of ``null`` is based on the ANSI SQL meaning of the word:
 
@@ -89,7 +99,7 @@ Some quick examples of the difference:
 
 .. code:: nim
 
-    assert( nothing(int) == nothing(nint) )
+    assert( nothing(nint) == nothing(nint) )
     assert( null(nint) != null(nint) )
 
     assert( (nothing(nint) + 4).isError )
@@ -128,7 +138,7 @@ Aggregation functions (such as ``sum`` or ``count``) simply ignore the ``nothing
     assert( expected == pretty(j) )
 
 Notice that in JSON, a value that does not exist (``nothing``) is simply
-skipped. Whereas a ``null` is stored as an unknown (JSON ``null``).
+skipped. Whereas an unknown value (``null``) is stored as a JSON ``null``.
 
 Downsides
 =========
@@ -193,10 +203,6 @@ There are two planned expansions after version 1.0.0 is released:
 
   - nint64 (aka "long")
 
-  - nTime
-
-  - nOid
-
   - nDecimal
 
 
@@ -211,5 +217,21 @@ Table Of Contents
     A. `nullable Reference <docs/nullable-ref.rst>`__
     B. `nullable/nint General Documentation <docs/nullable-nint-gen.rst>`__
     C. `nullable/nint Reference <docs/nullable-nint-ref.rst>`__
-    D. `nullable/core General Documentation <docs/nullable-core-gen.rst>`__
-    E. `nullable/core Reference <docs/nullable-core-ref.rst>`__
+    D. `nullable/nfloat General Documentation <docs/nullable-nfloat-gen.rst>`__
+    E. `nullable/nfloat Reference <docs/nullable-nfloat-ref.rst>`__
+    F. `nullable/noid General Documentation <docs/nullable-noid-gen.rst>`__
+    G. `nullable/noid Reference <docs/nullable-noid-ref.rst>`__
+    H. `nullable/generic General Documentation <docs/nullable-generic-gen.rst>`__
+    I. `nullable/generic Reference <docs/nullable-generic-ref.rst>`__
+    J. `nullable/ntime General Documentation <docs/nullable-ntime-gen.rst>`__
+    K. `nullable/ntime Reference <docs/nullable-ntime-ref.rst>`__
+    L. `nullable/nbool General Documentation <docs/nullable-nbool-gen.rst>`__
+    M. `nullable/nbool Reference <docs/nullable-nbool-ref.rst>`__
+    N. `nullable/nstring General Documentation <docs/nullable-nstring-gen.rst>`__
+    O. `nullable/nstring Reference <docs/nullable-nstring-ref.rst>`__
+    P. `nullable/private General Documentation <docs/nullable-private-gen.rst>`__
+    Q. `nullable/private Reference <docs/nullable-private-ref.rst>`__
+    R. `nullable/core General Documentation <docs/nullable-core-gen.rst>`__
+    S. `nullable/core Reference <docs/nullable-core-ref.rst>`__
+    T. `nullable/norm/mongodb General Documentation <docs/nullable-norm-mongodb-gen.rst>`__
+    U. `nullable/norm/mongodb Reference <docs/nullable-norm-mongodb-ref.rst>`__

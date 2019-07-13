@@ -1,7 +1,7 @@
-nullable/nint Reference
+nullable/nfloat Reference
 ==============================================================================
 
-The following are the references for nullable/nint.
+The following are the references for nullable/nfloat.
 
 
 
@@ -17,20 +17,20 @@ Procs and Methods
 
     .. code:: nim
 
-        proc `*`*(a: nint, b: nint): nint =
+        proc `*`*(a: nfloat, b: nfloat): nfloat =
 
     *source line: 280*
 
     Operator: MULTIPLY
     
-    Represented by the asterisk "*" symbol, this operation multiplies two nint
+    Represented by the asterisk "*" symbol, this operation multiplies two nfloat
     values together.
     
     If either value is errored, the result is an error.
     If either value is null, the result is null.
     if either value is ``nothing``, the results is zero.
     
-    returns a new ``nint``
+    returns a new ``nfloat``
 
 
 `+`
@@ -38,13 +38,13 @@ Procs and Methods
 
     .. code:: nim
 
-        proc `+`*(a: nint, b: nint): nint =
+        proc `+`*(a: nfloat, b: nfloat): nfloat =
 
     *source line: 202*
 
     Operator: ADD
     
-    Represented by the plus "+" symbol, this operation adds two nint
+    Represented by the plus "+" symbol, this operation adds two nfloat
     values together.
     
     If either value is errored, the result is an error.
@@ -52,7 +52,7 @@ Procs and Methods
     if one value is ``nothing``, the nothing is treated as zero
     if both values are nothing, the result is nothing
     
-    returns a new ``nint``
+    returns a new ``nfloat``
 
 
 `-`
@@ -60,13 +60,13 @@ Procs and Methods
 
     .. code:: nim
 
-        proc `-`*(a: nint, b: nint): nint =
+        proc `-`*(a: nfloat, b: nfloat): nfloat =
 
     *source line: 241*
 
     Operator: SUBTRACT
     
-    Represented by the minus "-" symbol, this operation subtracts two nint
+    Represented by the minus "-" symbol, this operation subtracts two nfloat
     values from each other.
     
     If either value is errored, the result is an error.
@@ -74,7 +74,7 @@ Procs and Methods
     if one value is ``nothing``, the nothing is treated as zero
     if both values are nothing, the result is nothing
     
-    returns a new ``nint``
+    returns a new ``nfloat``
 
 
 `<`
@@ -82,7 +82,7 @@ Procs and Methods
 
     .. code:: nim
 
-        proc `<`*(a: nint, b: nint): bool =
+        proc `<`*(a: nfloat, b: nfloat): bool =
 
     *source line: 336*
 
@@ -100,11 +100,11 @@ Procs and Methods
 
     .. code:: nim
 
-        proc `==`*(a: int, b: nint): bool =
+        proc `==`*(a: float, b: nfloat): bool =
 
     *source line: 420*
 
-    Operator: EQUAL-TO (int vs nint)
+    Operator: EQUAL-TO (float vs nfloat)
     
     Represented by two equal symbols "==" symbol, this operation compares two
     values.
@@ -115,11 +115,11 @@ Procs and Methods
 
     .. code:: nim
 
-        proc `==`*(a: nint, b: int): bool =
+        proc `==`*(a: nfloat, b: float): bool =
 
     *source line: 405*
 
-    Operator: EQUAL-TO (nint vs int)
+    Operator: EQUAL-TO (nfloat vs float)
     
     Represented by two equal symbols "==" symbol, this operation compares two
     values.
@@ -130,14 +130,14 @@ Procs and Methods
 
     .. code:: nim
 
-        proc `==`*(a: nint, b: nint): bool =
+        proc `==`*(a: nfloat, b: nfloat): bool =
 
     *source line: 384*
 
-    Operator: EQUAL-TO (nint vs nint)
+    Operator: EQUAL-TO (nfloat vs nfloat)
     
     Represented by two equal symbols "==" symbol, this operation compares two
-    ``nint`` values.
+    ``nfloat`` values.
     
     If either value is null, then it returns false.
     If either value is ``error``, the result is false.
@@ -149,7 +149,7 @@ Procs and Methods
 
     .. code:: nim
 
-        proc `>`*(a: nint, b: nint): bool =
+        proc `>`*(a: nfloat, b: nfloat): bool =
 
     *source line: 360*
 
@@ -167,19 +167,19 @@ Procs and Methods
 
     .. code:: nim
 
-        proc `div`*(dividend: nint, divisor: nint): nint =
+        proc `div`*(dividend: nfloat, divisor: nfloat): nfloat =
 
     *source line: 441*
 
     Operator: INTEGER_DIVIDE
     
-    This operation divides two nint values and returns only the integer
+    This operation divides two nfloat values and returns only the float
     quotient.
     
     If either value is ``null`` or errored, the result is an error.
     If the divisor is zero, the result is an error.
     
-    returns a new ``nint``
+    returns a new ``nfloat``
 
 
 

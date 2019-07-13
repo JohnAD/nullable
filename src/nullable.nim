@@ -16,6 +16,12 @@
 ## 
 ## - ``float`` (aka float64)
 ##
+## plus from the libraries:
+##
+## - ``Time``
+## 
+## - ``Oid``
+##
 ## Examples of their use:
 ##
 ## .. code:: nim
@@ -36,9 +42,13 @@
 ## 
 ## - ``nfloat``
 ##
+## - ``nTime``
+## 
+## - ``nOid``
+## 
 ## The primary difference when use these, it that in addition to the traditional
-## values they type can have, you can also set it them ``nothing``, ``null`` or 
-## ``Error``.
+## values they type can have, you can also set it them to ``nothing``, ``null`` 
+## or an ``Error``.
 ##
 ## .. code:: nim
 ##
@@ -185,10 +195,6 @@
 ## 
 ##   - nint64 (aka "long")
 ## 
-##   - nTime
-## 
-##   - nOid
-## 
 ##   - nDecimal
 ##
 
@@ -196,10 +202,18 @@ import
   nullable/core as core,
   nullable/nint as nint,
   nullable/nstring as nstring,
+  nullable/nfloat as nfloat,
+  nullable/nbool as nbool,
+  nullable/ntime as ntime,
+  nullable/noid as noid,
   nullable/generic as generic
 
 export
   core,
   nint,
   nstring,
+  nfloat,
+  nbool,
+  ntime,
+  noid,
   generic

@@ -1,5 +1,50 @@
-nullable/core General Documentation
+nullable/nstring General Documentation
 ==============================================================================
+
+The ``nstring`` object type represents a "nullable" string.
+
+It should behave just like the native 'string' type in most instances; except
+where the possible null, nothing, or Error states are involved.
+
+Further details are in the "nstring Reference" page linked at the bottom.
+
+Handling Declaration and Assignment
+-----------------------------------
+You will need need to explicity assign the variable to be of type ``nstring``
+if using a literal string. That is because literal strings default to
+the built in data type of ``string``.
+
+.. code:: nim
+
+    import nullable
+
+    var a = "hello".nstring      # works
+    var b: nstring = "hello"     # works
+    var c = to_nstring("hello")  # works
+    var d = c                    # also works
+    a = "goodbye"                # still works
+
+    var e = "hello"              # does not work; "e" will be an "string" instead
+
+and, of course, you can assign the value to ``null`` or ``nothing``, but again,
+you must be explicit when declaring the variable.
+
+.. code:: nim
+
+    import nullable
+
+    var a = null(string)           # works
+    var b: nstring = null(string)  # works
+    var c = null(nstring)          # also works oddly enough
+
+The error state for a ``nstring`` is set explicitly with the ``setError`` function.
+
+.. code:: nim
+
+    import nullable
+
+    var a: nstring
+    a.setError(ValueError(msg: "something went wrong"))
 
 
 

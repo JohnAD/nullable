@@ -1,151 +1,7 @@
-nullable/core Reference
+nullable/generic Reference
 ==============================================================================
 
-The following are the references for nullable/core.
-
-
-
-Types
-=====
-
-
-
-Audience
----------------------------------------------------------
-
-    .. code:: nim
-
-        Audience* = enum
-          ops,
-          admin,
-          user,
-          public
-
-
-    *source line: 29*
-
-    Distribution limits for news of a hint.
-    
-    ops
-      only seen by those with server/system maintainer clearance
-    
-    admin
-      only seen by end-users with admin clearance (and ops)
-    
-    user
-      only seen by regular users (and admin and ops)
-    
-    public
-      the whole world (no restrictions)
-
-
-ExceptionClass
----------------------------------------------------------
-
-    .. code:: nim
-
-        ExceptionClass* = object
-          msg*: string
-          exception_type*: string
-          trace*: string
-
-
-    *source line: 69*
-
-
-
-Hint
----------------------------------------------------------
-
-    .. code:: nim
-
-        Hint* = object
-          msg*: string           # defaults to ""
-          level*: Level          # defaults to 'lvlAll'
-          judgement*: Judgement  # defaults to 'info'
-          audience*: Audience    # defaults to 'ops'
-
-
-    *source line: 64*
-
-
-
-Judgement
----------------------------------------------------------
-
-    .. code:: nim
-
-        Judgement* = enum
-          info,
-          success,
-          warning,
-          danger
-
-
-    *source line: 8*
-
-    Category of judgement for a hint.
-    
-    info
-        neutral (but ok if forced to judge)
-    
-    success
-        ok
-    
-    warning
-        ok; but with reservations
-    
-    danger
-        not ok
-    
-    These categories are inspired by the Bootstrap framework
-    (https://getbootstrap.com/)
-
-
-NothingClass
----------------------------------------------------------
-
-    .. code:: nim
-
-        NothingClass* = object
-          exists: bool
-
-
-    *source line: 62*
-
-
-
-NullClass
----------------------------------------------------------
-
-    .. code:: nim
-
-        NullClass* = object
-          exists: bool          # note: this field is not actually used.
-
-
-    *source line: 60*
-
-
-
-NullableKind
----------------------------------------------------------
-
-    .. code:: nim
-
-        NullableKind* = enum
-          nlkValue,
-          nlkNothing,
-          nlkNull,
-          nlkError
-          # state_valued,
-          # state_nothing,
-          # state_nulled,
-          # state_errored
-
-
-    *source line: 49*
-
+The following are the references for nullable/generic.
 
 
 
@@ -161,20 +17,130 @@ Procs and Methods
 
     .. code:: nim
 
-        proc `$`*(e: ExceptionClass): string =
+        proc `$`*[T](n: Nullable[T]): string =
 
-    *source line: 79*
+    *source line: 29*
 
 
 
-error_repr
+actualSetError
 ---------------------------------------------------------
 
     .. code:: nim
 
-        proc error_repr*(err_list: seq[ExceptionClass]): string =
+        proc actualSetError*[T](n: var Nullable[T], e: Nullable[T], loc: string) =
 
-    *source line: 82*
+    *source line: 76*
+
+
+
+actualSetError
+---------------------------------------------------------
+
+    .. code:: nim
+
+        proc actualSetError*[T](n: var Nullable[T], e: ValidErrors, loc: string) =
+
+    *source line: 67*
+
+
+
+get
+---------------------------------------------------------
+
+    .. code:: nim
+
+        proc get*[T](n: Nullable[T]): T =
+
+    *source line: 40*
+
+
+
+has_error
+---------------------------------------------------------
+
+    .. code:: nim
+
+        proc has_error*[T](n: Nullable[T]): bool =
+
+    *source line: 86*
+
+    Check to see if n has an error associated with it.
+    
+    .. code:: nim
+    
+        var a: Nullable[T] = ValueError("Too small.")
+        if a.has_error:
+          echo "Error found: " & $a
+    
+
+
+has_value
+---------------------------------------------------------
+
+    .. code:: nim
+
+        proc has_value*[T](n: Nullable[T]): bool =
+
+    *source line: 131*
+
+    Check to see if n has a legitimate number. In other words, it verifies that it is not 'null' and it does not
+    have an error. A newly declared ``Nullable[T]`` defaults to 0 (zero) and is good.
+    
+    .. code:: nim
+    
+        var a: Nullable[T] = 5
+        if a.is_good:
+          echo "a = " & $a
+    
+
+
+is_nothing
+---------------------------------------------------------
+
+    .. code:: nim
+
+        proc is_nothing*[T](n: Nullable[T]): bool =
+
+    *source line: 101*
+
+    Check to see if n is unknown (a null).
+    
+    .. code:: nim
+    
+        var a: Nullable[T] = null
+        if a.is_null:
+          echo "It is null."
+    
+
+
+is_null
+---------------------------------------------------------
+
+    .. code:: nim
+
+        proc is_null*[T](n: Nullable[T]): bool =
+
+    *source line: 116*
+
+    Check to see if n is unknown (a null).
+    
+    .. code:: nim
+    
+        var a: Nullable[T] = null
+        if a.is_null:
+          echo "It is null."
+    
+
+
+repr
+---------------------------------------------------------
+
+    .. code:: nim
+
+        proc repr*[T](n: Nullable[T]): string =
+
+    *source line: 47*
 
 
 

@@ -1,5 +1,66 @@
-nullable/core General Documentation
+nullable/ntime Reference
 ==============================================================================
+
+The following are the references for nullable/ntime.
+
+
+
+
+
+
+Procs and Methods
+=================
+
+
+`==`
+---------------------------------------------------------
+
+    .. code:: nim
+
+        proc `==`*(a: Time, b: nTime): bool =
+
+    *source line: 188*
+
+    Operator: EQUAL-TO (Time vs nTime)
+    
+    Represented by two equal symbols "==" symbol, this operation compares two
+    values.
+
+
+`==`
+---------------------------------------------------------
+
+    .. code:: nim
+
+        proc `==`*(a: nTime, b: Time): bool =
+
+    *source line: 173*
+
+    Operator: EQUAL-TO (nTime vs Time)
+    
+    Represented by two equal symbols "==" symbol, this operation compares two
+    values.
+
+
+`==`
+---------------------------------------------------------
+
+    .. code:: nim
+
+        proc `==`*(a: nTime, b: nTime): bool =
+
+    *source line: 152*
+
+    Operator: EQUAL-TO (nTime vs nTime)
+    
+    Represented by two equal symbols "==" symbol, this operation compares two
+    ``nTime`` values.
+    
+    If either value is null, then it returns false.
+    If either value is ``error``, the result is false.
+    If both are nothing, then true. If only one is nothing, then false.
+
+
 
 
 

@@ -1,5 +1,66 @@
-nullable/core General Documentation
+nullable/noid Reference
 ==============================================================================
+
+The following are the references for nullable/noid.
+
+
+
+
+
+
+Procs and Methods
+=================
+
+
+`==`
+---------------------------------------------------------
+
+    .. code:: nim
+
+        proc `==`*(a: Oid, b: nOid): bool =
+
+    *source line: 189*
+
+    Operator: EQUAL-TO (Oid vs nOid)
+    
+    Represented by two equal symbols "==" symbol, this operation compares two
+    values.
+
+
+`==`
+---------------------------------------------------------
+
+    .. code:: nim
+
+        proc `==`*(a: nOid, b: Oid): bool =
+
+    *source line: 174*
+
+    Operator: EQUAL-TO (nOid vs Oid)
+    
+    Represented by two equal symbols "==" symbol, this operation compares two
+    values.
+
+
+`==`
+---------------------------------------------------------
+
+    .. code:: nim
+
+        proc `==`*(a: nOid, b: nOid): bool =
+
+    *source line: 153*
+
+    Operator: EQUAL-TO (nOid vs nOid)
+    
+    Represented by two equal symbols "==" symbol, this operation compares two
+    ``nOid`` values.
+    
+    If either value is null, then it returns false.
+    If either value is ``error``, the result is false.
+    If both are nothing, then true. If only one is nothing, then false.
+
+
 
 
 
