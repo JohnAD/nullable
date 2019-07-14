@@ -83,45 +83,6 @@ import
 ##     a = a + 2.nfloat
 ##
 
-# type
-#   nfloat* = object
-#     ## The object used to represent the ``nfloat`` data type.
-#     ##
-#     ## Please note that elements are not directly accessible. You cannot
-#     ## do this:
-#     ##
-#     ## .. code:: nim
-#     ##
-#     ##     var a: nfloat = 3
-#     ##     echo "a = ", $a.stored_value
-#     ##
-#     ## that will generate a compiler error. Instead, rely on the libraries
-#     ## ability to convert and adjust as needed. So, simply:
-#     ##
-#     ## .. code:: nim
-#     ##
-#     ##     var a: nfloat = 3
-#     ##     echo "a = ", $a
-#     ##
-#     ## or possibly:
-#     ##
-#     ## .. code:: nim
-#     ##
-#     ##     var a: nfloat = 3
-#     ##     var b: float = a
-#     ##     echo "b = ", $b
-#     ##
-#     case kind: NullableKind
-#     of nlkValue:
-#       stored_value: float
-#     of nlkNothing:
-#       discard
-#     of nlkNull:
-#       discard
-#     of nlkError:
-#       errors*: seq[ExceptionClass]
-#     hints: seq[Hint]
-
 {.hint[XDeclaredButNotUsed]:off.}
 
 generate_generic_handling(nfloat, float)
@@ -177,15 +138,6 @@ converter from_nfloat_to_int*(n: nfloat): int =
     raise newException(ValueError, "nfloat: Cannot convert null to an float.")
   of nlkError:
     raise newException(ValueError, "nfloat: Cannot convert an error to an float.")
-
-proc make_nothing(n: var nfloat) =
-  ## Force the nfloat into a null state
-  n = nfloat(kind: nlkNull, hints: n.hints)
-
-proc make_null(n: var nfloat) =
-  ## Force the nfloat into a null state
-  n = nfloat(kind: nlkNull, hints: n.hints)
-
 
 # ###########################################
 #

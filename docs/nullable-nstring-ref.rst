@@ -19,7 +19,7 @@ Procs and Methods
 
         proc `&`*(a: nstring, b: nstring): nstring =
 
-    *source line: 249*
+    *source line: 241*
 
     Operator: AND
     
@@ -37,7 +37,7 @@ Procs and Methods
 
         proc `<`*(a: nstring, b: nstring): bool =
 
-    *source line: 157*
+    *source line: 149*
 
     Operator: LESS-THAN
     
@@ -55,7 +55,7 @@ Procs and Methods
 
         proc `==`*(a: nstring, b: nstring): bool =
 
-    *source line: 203*
+    *source line: 195*
 
     Operator: EQUAL-TO (nstring vs nstring)
     
@@ -76,7 +76,7 @@ Procs and Methods
 
         proc `==`*(a: nstring, b: string): bool =
 
-    *source line: 226*
+    *source line: 218*
 
     Operator: EQUAL-TO (nstring vs nstring)
     
@@ -95,7 +95,7 @@ Procs and Methods
 
         proc `>`*(a: nstring, b: nstring): bool =
 
-    *source line: 180*
+    *source line: 172*
 
     Operator: GREATER-THAN
     
@@ -131,9 +131,9 @@ Table Of Contents
     M. `nullable/nbool Reference <nullable-nbool-ref.rst>`__
     N. `nullable/nstring General Documentation <nullable-nstring-gen.rst>`__
     O. `nullable/nstring Reference <nullable-nstring-ref.rst>`__
-    P. `nullable/private General Documentation <nullable-private-gen.rst>`__
-    Q. `nullable/private Reference <nullable-private-ref.rst>`__
-    R. `nullable/core General Documentation <nullable-core-gen.rst>`__
-    S. `nullable/core Reference <nullable-core-ref.rst>`__
+    P. `nullable/core General Documentation <nullable-core-gen.rst>`__
+    Q. `nullable/core Reference <nullable-core-ref.rst>`__
+    R. `nullable/nchar General Documentation <nullable-nchar-gen.rst>`__
+    S. `nullable/nchar Reference <nullable-nchar-ref.rst>`__
     T. `nullable/norm/mongodb General Documentation <nullable-norm-mongodb-gen.rst>`__
     U. `nullable/norm/mongodb Reference <nullable-norm-mongodb-ref.rst>`__

@@ -125,14 +125,6 @@ converter from_nstring_to_string*(n: nstring): string =
   of nlkError:
     raise newException(ValueError, "nstring: Cannot convert an error to a string.")
 
-proc make_nothing(n: var nstring) =
-  ## Force the nstring into a null state
-  n = nstring(kind: nlkNull, hints: n.hints)
-
-proc make_null(n: var nstring) =
-  ## Force the nstring into a null state
-  n = nstring(kind: nlkNull, hints: n.hints)
-
 
 # ###########################################
 #

@@ -83,45 +83,6 @@ import
 ##     a = a + 2.nbool
 ##
 
-# type
-#   nbool* = object
-#     ## The object used to represent the ``nbool`` data type.
-#     ##
-#     ## Please note that elements are not directly accessible. You cannot
-#     ## do this:
-#     ##
-#     ## .. code:: nim
-#     ##
-#     ##     var a: nbool = 3
-#     ##     echo "a = ", $a.stored_value
-#     ##
-#     ## that will generate a compiler error. Instead, rely on the libraries
-#     ## ability to convert and adjust as needed. So, simply:
-#     ##
-#     ## .. code:: nim
-#     ##
-#     ##     var a: nbool = 3
-#     ##     echo "a = ", $a
-#     ##
-#     ## or possibly:
-#     ##
-#     ## .. code:: nim
-#     ##
-#     ##     var a: nbool = 3
-#     ##     var b: bool = a
-#     ##     echo "b = ", $b
-#     ##
-#     case kind: NullableKind
-#     of nlkValue:
-#       stored_value: bool
-#     of nlkNothing:
-#       discard
-#     of nlkNull:
-#       discard
-#     of nlkError:
-#       errors*: seq[ExceptionClass]
-#     hints: seq[Hint]
-
 {.hint[XDeclaredButNotUsed]:off.}
 
 generate_generic_handling(nbool, bool)
@@ -149,15 +110,6 @@ converter from_nbool_to_bool*(n: nbool): bool =
     raise newException(ValueError, "nbool: Cannot convert null to an bool.")
   of nlkError:
     raise newException(ValueError, "nbool: Cannot convert an error to an bool.")
-
-proc make_nothing(n: var nbool) =
-  ## Force the nbool into a null state
-  n = nbool(kind: nlkNull, hints: n.hints)
-
-proc make_null(n: var nbool) =
-  ## Force the nbool into a null state
-  n = nbool(kind: nlkNull, hints: n.hints)
-
 
 # ###########################################
 #

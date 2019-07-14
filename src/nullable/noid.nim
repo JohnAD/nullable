@@ -117,15 +117,6 @@ converter from_nOid_to_Oid*(n: nOid): Oid =
   of nlkError:
     raise newException(ValueError, "nOid: Cannot convert an error to an Oid.")
 
-proc make_nothing(n: var nOid) =
-  ## Force the nOid into a null state
-  n = nOid(kind: nlkNull, hints: n.hints)
-
-proc make_null(n: var nOid) =
-  ## Force the nOid into a null state
-  n = nOid(kind: nlkNull, hints: n.hints)
-
-
 # ###########################################
 #
 # OPERATORS

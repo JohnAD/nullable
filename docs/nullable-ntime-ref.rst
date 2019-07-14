@@ -19,7 +19,7 @@ Procs and Methods
 
         proc `==`*(a: Time, b: nTime): bool =
 
-    *source line: 188*
+    *source line: 180*
 
     Operator: EQUAL-TO (Time vs nTime)
     
@@ -34,7 +34,7 @@ Procs and Methods
 
         proc `==`*(a: nTime, b: Time): bool =
 
-    *source line: 173*
+    *source line: 165*
 
     Operator: EQUAL-TO (nTime vs Time)
     
@@ -49,7 +49,7 @@ Procs and Methods
 
         proc `==`*(a: nTime, b: nTime): bool =
 
-    *source line: 152*
+    *source line: 144*
 
     Operator: EQUAL-TO (nTime vs nTime)
     
@@ -86,9 +86,9 @@ Table Of Contents
     M. `nullable/nbool Reference <nullable-nbool-ref.rst>`__
     N. `nullable/nstring General Documentation <nullable-nstring-gen.rst>`__
     O. `nullable/nstring Reference <nullable-nstring-ref.rst>`__
-    P. `nullable/private General Documentation <nullable-private-gen.rst>`__
-    Q. `nullable/private Reference <nullable-private-ref.rst>`__
-    R. `nullable/core General Documentation <nullable-core-gen.rst>`__
-    S. `nullable/core Reference <nullable-core-ref.rst>`__
+    P. `nullable/core General Documentation <nullable-core-gen.rst>`__
+    Q. `nullable/core Reference <nullable-core-ref.rst>`__
+    R. `nullable/nchar General Documentation <nullable-nchar-gen.rst>`__
+    S. `nullable/nchar Reference <nullable-nchar-ref.rst>`__
     T. `nullable/norm/mongodb General Documentation <nullable-norm-mongodb-gen.rst>`__
     U. `nullable/norm/mongodb Reference <nullable-norm-mongodb-ref.rst>`__

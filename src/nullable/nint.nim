@@ -178,14 +178,6 @@ converter from_nint_to_float*(n: nint): float =
   of nlkError:
     raise newException(ValueError, "nint: Cannot convert an error to an int.")
 
-proc make_nothing(n: var nint) =
-  ## Force the nint into a null state
-  n = nint(kind: nlkNull, hints: n.hints)
-
-proc make_null(n: var nint) =
-  ## Force the nint into a null state
-  n = nint(kind: nlkNull, hints: n.hints)
-
 
 # ###########################################
 #

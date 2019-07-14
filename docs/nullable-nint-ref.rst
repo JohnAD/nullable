@@ -19,7 +19,7 @@ Procs and Methods
 
         proc `*`*(a: nint, b: nint): nint =
 
-    *source line: 280*
+    *source line: 272*
 
     Operator: MULTIPLY
     
@@ -40,7 +40,7 @@ Procs and Methods
 
         proc `+`*(a: nint, b: nint): nint =
 
-    *source line: 202*
+    *source line: 194*
 
     Operator: ADD
     
@@ -62,7 +62,7 @@ Procs and Methods
 
         proc `-`*(a: nint, b: nint): nint =
 
-    *source line: 241*
+    *source line: 233*
 
     Operator: SUBTRACT
     
@@ -84,7 +84,7 @@ Procs and Methods
 
         proc `<`*(a: nint, b: nint): bool =
 
-    *source line: 336*
+    *source line: 328*
 
     Operator: LESS-THAN
     
@@ -102,7 +102,7 @@ Procs and Methods
 
         proc `==`*(a: int, b: nint): bool =
 
-    *source line: 420*
+    *source line: 412*
 
     Operator: EQUAL-TO (int vs nint)
     
@@ -117,7 +117,7 @@ Procs and Methods
 
         proc `==`*(a: nint, b: int): bool =
 
-    *source line: 405*
+    *source line: 397*
 
     Operator: EQUAL-TO (nint vs int)
     
@@ -132,7 +132,7 @@ Procs and Methods
 
         proc `==`*(a: nint, b: nint): bool =
 
-    *source line: 384*
+    *source line: 376*
 
     Operator: EQUAL-TO (nint vs nint)
     
@@ -151,7 +151,7 @@ Procs and Methods
 
         proc `>`*(a: nint, b: nint): bool =
 
-    *source line: 360*
+    *source line: 352*
 
     Operator: GREATER-THAN
     
@@ -169,7 +169,7 @@ Procs and Methods
 
         proc `div`*(dividend: nint, divisor: nint): nint =
 
-    *source line: 441*
+    *source line: 433*
 
     Operator: INTEGER_DIVIDE
     
@@ -207,9 +207,9 @@ Table Of Contents
     M. `nullable/nbool Reference <nullable-nbool-ref.rst>`__
     N. `nullable/nstring General Documentation <nullable-nstring-gen.rst>`__
     O. `nullable/nstring Reference <nullable-nstring-ref.rst>`__
-    P. `nullable/private General Documentation <nullable-private-gen.rst>`__
-    Q. `nullable/private Reference <nullable-private-ref.rst>`__
-    R. `nullable/core General Documentation <nullable-core-gen.rst>`__
-    S. `nullable/core Reference <nullable-core-ref.rst>`__
+    P. `nullable/core General Documentation <nullable-core-gen.rst>`__
+    Q. `nullable/core Reference <nullable-core-ref.rst>`__
+    R. `nullable/nchar General Documentation <nullable-nchar-gen.rst>`__
+    S. `nullable/nchar Reference <nullable-nchar-ref.rst>`__
     T. `nullable/norm/mongodb General Documentation <nullable-norm-mongodb-gen.rst>`__
     U. `nullable/norm/mongodb Reference <nullable-norm-mongodb-ref.rst>`__

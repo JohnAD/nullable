@@ -31,6 +31,14 @@ db(dbConnection, "", "", dbName):
       publisherTitle : string
       ratings: seq[float]
       copyright: Copyright
+    Mix = object
+      sorter: int
+      s: nstring
+      i: nint
+      f: nfloat
+      b: nbool
+      t: nTime
+      o: nOid
 
   # TODO proc getBookById(id: Oid): Book = withDb(Book.getOne id)
   # TODO add and test foreign key pulls in mongo
@@ -50,6 +58,8 @@ suite "nullable/norm/mongodb - CRUD":
       publisher_reference_id: array[1..9, Oid]
       book_reference_id: array[1..9, Oid]
       edition_reference_id: array[1..9, Oid]
+      mix_reference_id: array[1..3, Oid]
+      expected_object_str: array[1..3, string]
 
     withDb:
       createTables(force=true)
@@ -85,6 +95,67 @@ suite "nullable/norm/mongodb - CRUD":
         edition.insert()
         edition_reference_id[i] = edition.id
 
+      var m = Mix(
+        sorter: 1,
+        s: "joe",
+        i: null(int),
+        f: nothing(float),
+        b: false,
+        t: null(Time),
+        o: nothing(Oid)
+      )
+      m.insert()
+      mix_reference_id[1] = m.id
+      expected_object_str[1] = """{
+    "_id" : {"$$oid": "$1"},
+    "sorter" : 1,
+    "s" : "joe",
+    "i" : null,
+    "b" : false,
+    "t" : null
+}""".format(m.id)
+
+      m = Mix(
+        sorter: 2,
+        s: null(string),
+        i: nothing(int),
+        f: 99.32,
+        b: null(bool),
+        t: nothing(Time),
+        o: parseOid("01234567890123456789aaaa")
+      )
+      m.insert()
+      mix_reference_id[2] = m.id
+      expected_object_str[2] = """{
+    "_id" : {"$$oid": "$1"},
+    "sorter" : 2,
+    "s" : null,
+    "f" : 99.31999999999999,
+    "b" : null,
+    "o" : {"$$oid": "01234567890123456789aaaa"}
+}""".format(m.id)
+
+      m = Mix(
+        sorter: 3,
+        s: nothing(string),
+        i: 44,
+        f: null(float),
+        b: nothing(bool),
+        t: parseTime("1999-12-31", "yyyy-MM-dd", utc()),
+        o: null(Oid)
+      )
+      m.insert()
+      mix_reference_id[3] = m.id
+      expected_object_str[3] = """{
+    "_id" : {"$$oid": "$1"},
+    "sorter" : 3,
+    "i" : 44,
+    "f" : null,
+    "t" : $2,
+    "o" : null
+}""".format(m.id, $m.t)
+
+
   teardown:
     withDb:
       dropTables()
@@ -95,6 +166,7 @@ suite "nullable/norm/mongodb - CRUD":
         publishers = Publisher.getMany(100, sort = %*{"title": 1})
         books = Book.getMany(100, sort = %*{"title": 1})
         editions = Edition.getMany(100, sort = %*{"title": 1})
+        mixes = Mix.getMany(100, sort = %*{"sorter": 1})
 
       check len(publishers) == 9
       check len(books) == 9
@@ -109,6 +181,10 @@ suite "nullable/norm/mongodb - CRUD":
 
       check editions[7].title == "Edition 8"
       check editions[7].book == books[7]
+
+      check $mixes[0].toBson == expected_object_str[1]
+      check $mixes[1].toBson == expected_object_str[2]
+      check $mixes[2].toBson == expected_object_str[3]
 
   # test "Read records":
   #   withDb:

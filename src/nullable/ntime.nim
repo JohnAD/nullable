@@ -96,8 +96,9 @@ converter to_nTime*(n: Time): nTime =
   result = nTime(kind: nlkValue)
   result.stored_value = n
 
-# You cannot convert a string to a nTime
-# converter to_nTime*(n: char): nTime = 
+converter to_nTime*(str: string): nTime = 
+  result = nTime(kind: nlkValue)
+  result.stored_value = parseTime(str, "yyyy-MM-dd\'T\'HH:mm:ss", utc())
 
 # You cannot convert a float to a nTime
 # converter to_nTime*(n: char): nTime = 
@@ -115,15 +116,6 @@ converter from_nTime_to_Time*(n: nTime): Time =
     raise newException(ValueError, "nTime: Cannot convert null to an Time.")
   of nlkError:
     raise newException(ValueError, "nTime: Cannot convert an error to an Time.")
-
-proc make_nothing(n: var nTime) =
-  ## Force the nTime into a null state
-  n = nTime(kind: nlkNull, hints: n.hints)
-
-proc make_null(n: var nTime) =
-  ## Force the nTime into a null state
-  n = nTime(kind: nlkNull, hints: n.hints)
-
 
 # ###########################################
 #

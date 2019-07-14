@@ -229,9 +229,9 @@ Table Of Contents
     M. `nullable/nbool Reference <docs/nullable-nbool-ref.rst>`__
     N. `nullable/nstring General Documentation <docs/nullable-nstring-gen.rst>`__
     O. `nullable/nstring Reference <docs/nullable-nstring-ref.rst>`__
-    P. `nullable/private General Documentation <docs/nullable-private-gen.rst>`__
-    Q. `nullable/private Reference <docs/nullable-private-ref.rst>`__
-    R. `nullable/core General Documentation <docs/nullable-core-gen.rst>`__
-    S. `nullable/core Reference <docs/nullable-core-ref.rst>`__
+    P. `nullable/core General Documentation <docs/nullable-core-gen.rst>`__
+    Q. `nullable/core Reference <docs/nullable-core-ref.rst>`__
+    R. `nullable/nchar General Documentation <docs/nullable-nchar-gen.rst>`__
+    S. `nullable/nchar Reference <docs/nullable-nchar-ref.rst>`__
     T. `nullable/norm/mongodb General Documentation <docs/nullable-norm-mongodb-gen.rst>`__
     U. `nullable/norm/mongodb Reference <docs/nullable-norm-mongodb-ref.rst>`__

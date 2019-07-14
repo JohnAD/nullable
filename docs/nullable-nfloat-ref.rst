@@ -19,7 +19,7 @@ Procs and Methods
 
         proc `*`*(a: nfloat, b: nfloat): nfloat =
 
-    *source line: 280*
+    *source line: 232*
 
     Operator: MULTIPLY
     
@@ -40,7 +40,7 @@ Procs and Methods
 
         proc `+`*(a: nfloat, b: nfloat): nfloat =
 
-    *source line: 202*
+    *source line: 154*
 
     Operator: ADD
     
@@ -62,7 +62,7 @@ Procs and Methods
 
         proc `-`*(a: nfloat, b: nfloat): nfloat =
 
-    *source line: 241*
+    *source line: 193*
 
     Operator: SUBTRACT
     
@@ -84,7 +84,7 @@ Procs and Methods
 
         proc `<`*(a: nfloat, b: nfloat): bool =
 
-    *source line: 336*
+    *source line: 288*
 
     Operator: LESS-THAN
     
@@ -102,7 +102,7 @@ Procs and Methods
 
         proc `==`*(a: float, b: nfloat): bool =
 
-    *source line: 420*
+    *source line: 372*
 
     Operator: EQUAL-TO (float vs nfloat)
     
@@ -117,7 +117,7 @@ Procs and Methods
 
         proc `==`*(a: nfloat, b: float): bool =
 
-    *source line: 405*
+    *source line: 357*
 
     Operator: EQUAL-TO (nfloat vs float)
     
@@ -132,7 +132,7 @@ Procs and Methods
 
         proc `==`*(a: nfloat, b: nfloat): bool =
 
-    *source line: 384*
+    *source line: 336*
 
     Operator: EQUAL-TO (nfloat vs nfloat)
     
@@ -151,7 +151,7 @@ Procs and Methods
 
         proc `>`*(a: nfloat, b: nfloat): bool =
 
-    *source line: 360*
+    *source line: 312*
 
     Operator: GREATER-THAN
     
@@ -169,7 +169,7 @@ Procs and Methods
 
         proc `div`*(dividend: nfloat, divisor: nfloat): nfloat =
 
-    *source line: 441*
+    *source line: 393*
 
     Operator: INTEGER_DIVIDE
     
@@ -207,9 +207,9 @@ Table Of Contents
     M. `nullable/nbool Reference <nullable-nbool-ref.rst>`__
     N. `nullable/nstring General Documentation <nullable-nstring-gen.rst>`__
     O. `nullable/nstring Reference <nullable-nstring-ref.rst>`__
-    P. `nullable/private General Documentation <nullable-private-gen.rst>`__
-    Q. `nullable/private Reference <nullable-private-ref.rst>`__
-    R. `nullable/core General Documentation <nullable-core-gen.rst>`__
-    S. `nullable/core Reference <nullable-core-ref.rst>`__
+    P. `nullable/core General Documentation <nullable-core-gen.rst>`__
+    Q. `nullable/core Reference <nullable-core-ref.rst>`__
+    R. `nullable/nchar General Documentation <nullable-nchar-gen.rst>`__
+    S. `nullable/nchar Reference <nullable-nchar-ref.rst>`__
     T. `nullable/norm/mongodb General Documentation <nullable-norm-mongodb-gen.rst>`__
     U. `nullable/norm/mongodb Reference <nullable-norm-mongodb-ref.rst>`__

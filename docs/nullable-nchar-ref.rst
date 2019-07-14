@@ -1,5 +1,66 @@
-nullable/generic General Documentation
+nullable/nchar Reference
 ==============================================================================
+
+The following are the references for nullable/nchar.
+
+
+
+
+
+
+Procs and Methods
+=================
+
+
+`==`
+---------------------------------------------------------
+
+    .. code:: nim
+
+        proc `==`*(a: char, b: nchar): bool =
+
+    *source line: 184*
+
+    Operator: EQUAL-TO (char vs nchar)
+    
+    Represented by two equal symbols "==" symbol, this operation compares two
+    values.
+
+
+`==`
+---------------------------------------------------------
+
+    .. code:: nim
+
+        proc `==`*(a: nchar, b: char): bool =
+
+    *source line: 169*
+
+    Operator: EQUAL-TO (nchar vs char)
+    
+    Represented by two equal symbols "==" symbol, this operation compares two
+    values.
+
+
+`==`
+---------------------------------------------------------
+
+    .. code:: nim
+
+        proc `==`*(a: nchar, b: nchar): bool =
+
+    *source line: 148*
+
+    Operator: EQUAL-TO (nchar vs nchar)
+    
+    Represented by two equal symbols "==" symbol, this operation compares two
+    ``nchar`` values.
+    
+    If either value is null, then it returns false.
+    If either value is ``error``, the result is false.
+    If both are nothing, then true. If only one is nothing, then false.
+
+
 
 
 

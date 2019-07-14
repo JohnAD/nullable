@@ -1,30 +1,30 @@
-nullable/nfloat General Documentation
+nullable/nchar General Documentation
 ==============================================================================
 
-The ``nfloat`` object type represents a "nullable" float.
+The ``nchar`` object type represents a "nullable" char.
 
-It should behave just like the native 'float' type in most instances; except
+It should behave just like the native 'char' type in most instances; except
 where the possible ``null`` or Error states are involved.
 
-Further details are in the "nfloat Reference" page linked at the bottom.
+Further details are in the "nchar Reference" page linked at the bottom.
 
 Handling Declaration and Assignment
 -----------------------------------
-You will need need to explicity assign the variable to be of type ``nfloat``
-if using a literal number. That is because literal floats default to
-the built in data type of ``float``.
+You will need need to explicity assign the variable to be of type ``nchar``
+if using a literal number. That is because literal chars default to
+the built in data type of ``char``.
 
 .. code:: nim
 
     import nullable
 
-    var a = 3.nfloat         # works
-    var b: nfloat = -4       # works
-    var c = to_nfloat(78)    # works
+    var a = 3.nchar         # works
+    var b: nchar = -4       # works
+    var c = to_nchar(78)    # works
     var d = c              # also works
     a = -99                # still works
 
-    var e = 23             # does not work; "e" will be an "float" instead
+    var e = 23             # does not work; "e" will be an "char" instead
 
 and, of course, you can assign the value to ``null``, but again, you must
 be explicit when declaring the variable.
@@ -33,9 +33,9 @@ be explicit when declaring the variable.
 
     import nullable
 
-    var a = null.nfloat      # works
-    var b: nfloat = null     # works
-    var c = to_nfloat(null)  # works
+    var a = null.nchar      # works
+    var b: nchar = null     # works
+    var c = to_nchar(null)  # works
     var d = c              # also works
     a = null               # still works
 
@@ -49,32 +49,32 @@ You can *sometimes* encounter an "ambiguous call" error at compile-time. For exa
 .. code:: nim
 
     import nullable
-    var a: nfloat = 3
+    var a: nchar = 3
     a = a + 2         # compiler error here!
 
 You will get a compiler message similar to:
 
 .. code:: text
 
-    example.nim(3, 7) Error: ambiguous call; both system.-(x: float, y: float)[declared in
-    ../../.choosenim/toolchains/nim-0.19.4/lib/system.nim(942, 5)] and nfloat.-(a: nfloat,
-    b: nfloat)[declared in src/nullable/nfloat.nim(161, 5)] match for: (nfloat, float literal(2))
+    example.nim(3, 7) Error: ambiguous call; both system.-(x: char, y: char)[declared in
+    ../../.choosenim/toolchains/nim-0.19.4/lib/system.nim(942, 5)] and nchar.-(a: nchar,
+    b: nchar)[declared in src/nullable/nchar.nim(161, 5)] match for: (nchar, char literal(2))
 
 Essentially, the nim compiler doesn't know whether to:
 
-a. convert ``a`` to an float, add the numbers, and then convert the answer back to an ``nfloat``, or
+a. convert ``a`` to an char, add the numbers, and then convert the answer back to an ``nchar``, or
 
-b. convert ``2`` to a ``nfloat``, and then add the numbers as ``nfloat``s
+b. convert ``2`` to a ``nchar``, and then add the numbers as ``nchar``s
 
 Hopefully, one day, the compiler will consider the assignment operation type
 as higher priority and choose (b) when handling such conflict.
 
-In the mean time, if you get such an error, explicity convert the value(s) to a ``nfloat``. Such as:
+In the mean time, if you get such an error, explicity convert the value(s) to a ``nchar``. Such as:
 
 .. code:: nim
 
-    var a: nfloat = 3
-    a = a + 2.nfloat
+    var a: nchar = 3
+    a = a + 2.nchar
 
 
 

@@ -1,3 +1,7 @@
 {
-  "name": "nullable"
+  "name": "nullable",
+  "doc_src_dir": "extradocs/",
+  "files_to_ignore": [
+    "src/nullable/private.nim"
+  ]
 }

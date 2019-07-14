@@ -67,6 +67,12 @@ template generate_generic_handling*(target, typ: untyped): untyped =
     else:
       raise newException(ValueError, "current state of variable does not have a value to get")
 
+  proc make_nothing(n: var target) =
+    n = target(kind: nlkNothing, hints: n.hints)
+
+  proc make_null(n: var target) =
+    n = target(kind: nlkNull, hints: n.hints)
+
   converter to_target*(n: Nullable[typ]): target =
     if n.is_null:
       result = target(kind: nlkNull)

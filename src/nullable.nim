@@ -200,6 +200,7 @@
 
 import
   nullable/core as core,
+  nullable/nchar as nchar,
   nullable/nint as nint,
   nullable/nstring as nstring,
   nullable/nfloat as nfloat,
@@ -210,6 +211,7 @@ import
 
 export
   core,
+  nchar,
   nint,
   nstring,
   nfloat,
