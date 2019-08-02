@@ -12,41 +12,39 @@ const
 
 type
   Copyright = object
-    legalName: nstring
-    year: nint
+    legalName: N[string]
+    year: N[int]
 
 dbAddObject(Copyright)
 
 db(dbConnection, "", "", dbName):
   type
     User {.table: "users".} = object
-      email {.unique.}: nstring
-      ssn: nint
+      email {.unique.}: N[string]
+      ssn: N[int]
       birthDate: Time
     Publisher {.table: "publishers".} = object
-      title {.unique.}: nstring
+      title {.unique.}: N[string]
     Book {.table: "books".} = object
-      title: nstring
-      authorEmail: nstring
+      title: N[string]
+      authorEmail: N[string]
       publisherTitle : string
       ratings: seq[float]
       copyright: Copyright
     Mix = object
       sorter: int
-      s: nstring
-      i: nint
-      f: nfloat
-      b: nbool
-      t: nTime
-      o: nOid
+      s: N[string]
+      i: N[int]
+      f: N[float]
+      b: N[bool]
+      t: N[Time]
+      o: N[Oid]
 
-  # TODO proc getBookById(id: Oid): Book = withDb(Book.getOne id)
-  # TODO add and test foreign key pulls in mongo
 
 type
   Edition {.table: "editions".} = object
     id {.dbCol: "_id".}: Oid
-    title: nstring
+    title: N[string]
     book: Book
 
 dbAddCollection(Edition)
@@ -156,9 +154,9 @@ suite "nullable/norm/mongodb - CRUD":
 }""".format(m.id, $m.t)
 
 
-  teardown:
-    withDb:
-      dropTables()
+  # teardown:
+  #   withDb:
+  #     dropTables()
 
   test "Create records":
     withDb:
@@ -166,6 +164,7 @@ suite "nullable/norm/mongodb - CRUD":
         publishers = Publisher.getMany(100, sort = %*{"title": 1})
         books = Book.getMany(100, sort = %*{"title": 1})
         editions = Edition.getMany(100, sort = %*{"title": 1})
+      let
         mixes = Mix.getMany(100, sort = %*{"sorter": 1})
 
       check len(publishers) == 9
@@ -180,7 +179,9 @@ suite "nullable/norm/mongodb - CRUD":
       check books[5].copyright.year == 1996
 
       check editions[7].title == "Edition 8"
-      check editions[7].book == books[7]
+      let cbt = editions[7].book.title.get()
+      let bt = books[7].title.get()
+      check cbt == bt
 
       check $mixes[0].toBson == expected_object_str[1]
       check $mixes[1].toBson == expected_object_str[2]

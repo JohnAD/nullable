@@ -73,17 +73,17 @@ template generate_generic_handling*(target, typ: untyped): untyped =
   proc make_null(n: var target) =
     n = target(kind: nlkNull, hints: n.hints)
 
-  converter to_target*(n: Nullable[typ]): target =
-    if n.is_null:
-      result = target(kind: nlkNull)
-    if n.is_nothing:
-      result = target(kind: nlkNothing)
-    if n.has_value:
-      result = target(kind: nlkValue)
-      result.stored_value = n.get()
-    if n.has_error:
-      result = target(kind: nlkError)
-      result.errors = n.errors
+  # converter to_target*(n: N[typ]): target =
+  #   if n.is_null:
+  #     result = target(kind: nlkNull)
+  #   if n.is_nothing:
+  #     result = target(kind: nlkNothing)
+  #   if n.has_value:
+  #     result = target(kind: nlkValue)
+  #     result.stored_value = n.get()
+  #   if n.has_error:
+  #     result = target(kind: nlkError)
+  #     result.errors = n.errors
 
   proc actualSetError*(n: var target, e: ValidErrors, loc: string) =
     if n.kind != nlkError:

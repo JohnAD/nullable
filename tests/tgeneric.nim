@@ -7,21 +7,21 @@ suite "nullable generics":
     type
       User = object
         # name: nstring
-        age: nint
-    var u: Nullable[User]
+        age: int
+    var u: N[User]
 
     u = User(age: 22)
     check $u == "(age: 22)"
-    check repr(u) == "Nullable[User](age: 22)"
+    check repr(u) == "N[User](age: 22)"
 
     u = nothing(User)
     check $u == "nothing"
-    check repr(u) == "Nullable[User](nothing)"
+    check repr(u) == "N[User](nothing)"
 
     u = null(User)
     check $u == "null"
-    check repr(u) == "Nullable[User](null)"
+    check repr(u) == "N[User](null)"
 
     u.setError ValueError(msg: "test")
     check $u == "@[ValueError(test)]"
-    check repr(u) == "Nullable[User]@[\n  ValueError(test) at (filename: \"/home/johnad/Projects/nullable/tests/tgeneric.nim\", line: 25, column: 5)\n]"
+    check repr(u) == "N[User]@[\n  ValueError(test) at (filename: \"/home/johnad/Projects/nullable/tests/tgeneric.nim\", line: 25, column: 5)\n]"

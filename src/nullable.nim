@@ -1,79 +1,44 @@
-## Replacement basic nim types that can, in addition to their normal values,
-## take on the values of ``nothing``, ``null`` or an Error object.
+## A nim type that expands on the original idea of the Option[T] ``options``
+## library for greater flexibility and logging.
 ##
 ## Introduction
 ## ============
 ##
-## Nim has five basic types:
+## Nim has a standard library called ``options`` that provides a type wrapper 
+## ``Option[T]`` which allows the easy creation types than can either be ``none``
+## or have a value. In many ways, ``Option[T]`` types allow procedures and variables
+## to have almost "dynamic" behavior while staying true to the enforcement of a
+## statically typed language.
 ##
-## - ``bool``
-## 
-## - ``char``
-## 
-## - ``string``
-## 
-## - ``int`` (aka int32)
-## 
-## - ``float`` (aka float64)
+## Unfortunately, for those accustomed to the open behavior of a dynamic language,
+## there are still some key scenarios that it cannot cover. Specifically:
 ##
-## plus from the libraries:
+## * There is no means to set the variable to an "Error" message.
+## * There is no way to "tag" extra information (even when not an error) to 
+##   the variable, such as messaging details.
+## * The defifinition of "none" is not distincly defined. Nor is there a way
+##   to indicate whether a variable is currently unknown or is a non-value.
+##   (In JSON, BSON, and SQL these are distinctly different things.)
 ##
-## - ``Time``
-## 
-## - ``Oid``
+## Nullable, using the ``N[T]`` wrapper was designed to solve these problems.
 ##
-## Examples of their use:
+## As a bonus, ``N[T]`` also allows:
 ##
-## .. code:: nim
+## * direct assignment conversion, thus avoiding the need for the ``some`` function.
+## * special handling for ``N[int]`` and ``N[float]``, giving them conversion,
+##   arithmetic, and comparitive functions
+## * special handling for ``N[string]``, ``N[Oid]``, ``N[bool]``, ``N[char]``, and
+##   ``N[Time]``, giving them extra conversion functions
 ##
-##     var x: int = 5
-##     var my_flag: bool = true
-##     var firstName: string
+## Basic Use and Assignment
+## ========================
 ##
-## This library introduces replacements. The names are prefixed with the letter "n":
+## TODO
 ##
-## - ``nbool``
-## 
-## - ``nchar``
-## 
-## - ``nstring``
-## 
-## - ``nint``
-## 
-## - ``nfloat``
+## Assigning Errors
+## ================
 ##
-## - ``nTime``
-## 
-## - ``nOid``
-## 
-## The primary difference when use these, it that in addition to the traditional
-## values they type can have, you can also set it them to ``nothing``, ``null`` 
-## or an ``Error``.
-##
-## .. code:: nim
-##
-##     import nullable
-##
-##     var x: nint = 5
-##     var my_flag: nbool = true
-##     var firstName: nstring
-##
-##     x = null                                      # storing "unknown"/null
-##     x = ValueError(msg: "Something went wrong.")  # storing an error
-##     x = -3                                        # store an actual integer
-##
-##     my_flag = nothing
-##     firstName = IOError(msg: "Name not found.")
-##
-## The types largely behave like their counterparts:
-##
-## .. code:: nim
-##
-##     var x: nint = -3
-##     var z = x        # z is a nint valued at -3
-##     z = x * 2        # z is now a nint valued at -6
-##     echo "z = ", z   # the message 'z = -6' displays on the screen
-##
+## TODO
 ##
 ## Null vs. Nothing
 ## ================
@@ -91,19 +56,26 @@
 ##
 ## .. code:: nim
 ## 
-##     assert( nothing(nint) == nothing(nint) )
-##     assert( null(nint) != null(nint) )
+##     assert( nothing(N[int]) == nothing(N[int]) )
+##     assert( null(N[int]) != null(N[int]) )
 ##
-##     assert( (nothing(nint) + 4).isError )
-##     assert( (null(nint) + 4) == null(nint) )
+##     assert( null(N[int]).isNull )
 ##
-##     var mySeq: seq[nint] = @[-9, null(nint), 3]
+## An "unknown" value (``null``) cannot be assumed to be the same as another
+## "unknown" value. This is in keeping with the term's meaning in databases. On
+## the other hand, ``nothing`` does equal ``nothing``. To determine if a variable
+## is null, use the ``isNull`` function.
+##
+## .. code:: nim
+## 
+##     assert( (nothing(N[int]) + 4).isError )
+##     assert( (null(N[int]) + 4) == null(N[int]) )
+##
+##     var mySeq: seq[N[int]] = @[-9, null(N[int]), 3]
 ##     assert( count(mySeq) == 2 )
 ##     assert( len(mySeq) == 3 )
 ##     assert( sum(mySeq) == -6 )
 ##
-## Simply put, an "unknown" value (``null``) cannot be assumed to be the same as another
-## "unknown" value. This is in keeping with the term's meaning in databases.
 ##
 ## Aggregation functions (such as ``sum`` or ``count``) simply ignore the ``nothing`` or
 ## ``null`` entries. This is also consistent with SQL and other database types.
@@ -115,9 +87,9 @@
 ##     var j = %* {
 ##       "name": "Bob",
 ##       "grandchildren": 0,
-##       "windturbine_category": nothing(nstring),
-##       "age": null(nstring),
-##       "other": @["J", null(nint), 4, nothing(nint), 3.2]
+##       "windturbine_category": nothing(N[string]),
+##       "age": null(N[string]),
+##       "other": @["J", null(N[int]), 4, nothing(N[int]), 3.2]
 ##     }
 ##
 ##     let expected = """{
@@ -156,30 +128,10 @@
 ##
 ## See the corresponding documentation below.
 ##
-## nullable/object
-## --------------- 
+## nullable/marshall
+## -----------------
 ##
-## Adds a macro for "wrapping" an object for use as a nullable equivalent. Only
-## works with objects.
-##
-## For example:
-##
-## .. code:: nim
-## 
-##     import nullable/object
-##
-##     type
-##       Person = object
-##         name: nstring
-##         age: nint
-##
-##     nullableType(Person, "nPerson")
-##
-##     var p: nPerson
-##
-##     p = nothing(nPerson)
-##     p = null(nPerson)
-##     p = nPerson("name": "Bob", age: null(nint))
+## Adds support to the standard marshall library.
 ##
 ## See the corresponding documentation below.
 ##
@@ -200,22 +152,22 @@
 
 import
   nullable/core as core,
-  nullable/nchar as nchar,
+  # nullable/nbool as nbool,
+  # nullable/nchar as nchar,
+  # nullable/nfloat as nfloat,
   nullable/nint as nint,
-  nullable/nstring as nstring,
-  nullable/nfloat as nfloat,
-  nullable/nbool as nbool,
-  nullable/ntime as ntime,
-  nullable/noid as noid,
+  # nullable/noid as noid,
+  # nullable/nstring as nstring,
+  # nullable/ntime as ntime,
   nullable/generic as generic
 
 export
   core,
-  nchar,
+  # nbool,
+  # nchar,
+  # nfloat,
   nint,
-  nstring,
-  nfloat,
-  nbool,
-  ntime,
-  noid,
+  # noid,
+  # nstring,
+  # ntime,
   generic
