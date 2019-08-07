@@ -2,7 +2,18 @@ import
   logging,
   strutils
 
-export Level
+export
+  Level
+
+type
+  NullableKind* = enum
+    nlkValue,
+    nlkNothing,
+    nlkNull,
+    nlkError
+
+type
+  ValidErrors* = ValueError | ArithmeticError | ResourceExhaustedError | OSError | IOError | FieldError
 
 type
   Judgement* = enum
@@ -21,11 +32,11 @@ type
     ##     not ok
     ##
     ## These categories are inspired by the Bootstrap framework
-    ## (https://getbootstrap.com/)
-    info,
-    success,
-    warning,
-    danger
+    ## (https://getbootstrap.com/).
+    jdgInfo,
+    jdgSuccess,
+    jdgWarning,
+    jdgDanger
   Audience* = enum
     ## Distribution limits for news of a hint.
     ## 
@@ -40,41 +51,51 @@ type
     ## 
     ## public
     ##   the whole world (no restrictions)
-    ops,
-    admin,
-    user,
-    public
+    audOps,
+    audAdmin,
+    audUser,
+    audPublic
 
 type
-  NullableKind* = enum
-    nlkValue,
-    nlkNothing,
-    nlkNull,
-    nlkError
-    # state_valued,
-    # state_nothing,
-    # state_nulled,
-    # state_errored
-
-type
-  NullClass* = object
-    exists: bool          # note: this field is not actually used.
-  NothingClass* = object
-    exists: bool
-  Hint* = object
-    msg*: string           # defaults to ""
-    level*: Level          # defaults to 'lvlAll'
-    judgement*: Judgement  # defaults to 'info'
-    audience*: Audience    # defaults to 'ops'
   ExceptionClass* = object
     msg*: string
     exception_type*: string
-    trace*: string
+    level*: Level            # defaults to 'lvlAll'
+    audience*: Audience      # defaults to 'ops'
+    trace*: string           # where in source code was error generated?
+
+type
+  Hint* = object
+    msg*: string           # defaults to ""
+    level*: Level          # defaults to 'lvlAll'
+    judgement*: Judgement  # defaults to 'detail'
+    audience*: Audience    # defaults to 'ops'
+
+type
+  N*[T] = object
+    ## A type that wraps T with extra functions that allow it have a state of
+    ## nothing, null, error, or T.
+    ##
+    ## Accessing or using ``kind``, ``stored_value``, or ``hints`` outside the
+    ## library is generally a bad idea.
+    case kind*: NullableKind
+    of nlkValue:
+      stored_value*: T
+    of nlkNothing:
+      discard
+    of nlkNull:
+      discard
+    of nlkError:
+      errors*: seq[ExceptionClass]
+    hints*: seq[Hint]
+
+template setError*(n: untyped, e: untyped, level: untyped, audience: untyped): untyped =
+  let pos = instantiationInfo()
+  actualSetError(n, e, $pos, level=level, audience=audience)
 
 template setError*(n: untyped, e: untyped): untyped =
-  let pos  = instantiationInfo()
-  actualSetError(n, e, $pos)
-
+  let pos = instantiationInfo()
+  actualSetError(n, e, $pos, level=lvlDebug, audience=audAdmin)
 
 proc `$`*(e: ExceptionClass): string = 
   result = "$1($2)".format(e.exception_type, e.msg)
@@ -84,27 +105,3 @@ proc error_repr*(err_list: seq[ExceptionClass]): string =
   for err in err_list:
       result &= "  $1($2) at $3\n".format(err.exception_type, err.msg, err.trace)
   result &= "]"
-
-
-
-  # nbool* = object
-  #   stored_value: bool      # defaults to false
-  #   null: bool              # defaults to false (not null)
-  #   error: string           # defaults to ""
-  # nchar* = object
-  #   stored_value: char      # defaults to ??
-  #   null: bool              # defaults to false (not null)
-  #   error: string           # defaults to ""
-  # nstring* = object
-  #   stored_value: string    # defaults to ""
-  #   null: bool              # defaults to false (not null)
-  #   error: string           # defaults to ""
-  # nfloat* = object
-  #   stored_value: float     # defaults to 0.0
-  #   null: bool              # defaults to false (not null)
-  #   error: string           # defaults to ""
-
-# const
-#   null* = NullClass(exists: true)
-  # nothing* = Nothingclass(exists: true)
-      

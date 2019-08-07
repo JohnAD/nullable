@@ -152,6 +152,7 @@
 
 import
   nullable/core as core,
+  nullable/hint as hint,
   # nullable/nbool as nbool,
   # nullable/nchar as nchar,
   # nullable/nfloat as nfloat,
@@ -163,6 +164,7 @@ import
 
 export
   core,
+  hint,
   # nbool,
   # nchar,
   # nfloat,

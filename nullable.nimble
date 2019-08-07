@@ -9,6 +9,4 @@ srcDir       = "src"
 # Dependencies
 
 requires "nim >= 0.20.0"
-requires "norm"
-requires "nimble"
 

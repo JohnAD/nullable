@@ -24,4 +24,4 @@ suite "nullable generics":
 
     u.setError ValueError(msg: "test")
     check $u == "@[ValueError(test)]"
-    check repr(u) == "N[User]@[\n  ValueError(test) at (filename: \"/home/johnad/Projects/nullable/tests/tgeneric.nim\", line: 25, column: 5)\n]"
+    check repr(u) == "N[User]@[\n  ValueError(test) at (filename: \"tgeneric.nim\", line: 25, column: 5)\n]"

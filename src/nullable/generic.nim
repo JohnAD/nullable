@@ -4,26 +4,9 @@ import
 
 import
   core,
+  hint,
   private
 
-
-type
-  N*[T] = object
-    ## A type that wraps T with extra functions that allow it have a state of
-    ## nothing, null, error, or T.
-    ##
-    ## Accessing or using ``kind``, ``stored_value``, or ``hints`` outside the
-    ## library is generally a bad idea.
-    case kind*: NullableKind
-    of nlkValue:
-      stored_value: T
-    of nlkNothing:
-      discard
-    of nlkNull:
-      discard
-    of nlkError:
-      errors*: seq[ExceptionClass]
-    hints: seq[Hint]
 
 
 proc `$`*[T](n: N[T]): string = 
@@ -53,8 +36,23 @@ proc getValue*[T](n: N[T]): T =
 
 
 proc set*[T](n: var N[T], newValue: T) =
+  ## makes 'n' to have the 'newValue'.
+  ##
+  ## the difference between:
+  ##
+  ##    var abc: N[int]
+  ##    abc.set(3)
+  ##
+  ## and
+  ##
+  ##    var abc: N[int]
+  ##    abc = 3
+  ##
+  ## is that set will preserve any hints that have been given to the 
+  ## variable. But, assigning the variable directly will wipe out any
+  ## history.
   if n.kind != nlkValue: 
-    n = N[T](kind: nlkValue)
+    n = N[T](kind: nlkValue, hints: n.hints)
   n.stored_value = newValue
 
 proc repr*[T](n: N[T]): string = 
@@ -80,14 +78,64 @@ template nothing*(T: untyped): untyped =
 template null*(T: untyped): untyped =
   N[T](kind: nlkNull)
 
+proc makeNothing*[T](n: var N[T]) =
+  ## makes the parameter 'n' to be 'nothing'.
+  ##
+  ## the difference between:
+  ##
+  ##    var abc: N[int] = 4
+  ##    abc.makeNothing()
+  ##
+  ## and
+  ##
+  ##    var abc: N[int] = 4
+  ##    abc = nothing(int)
+  ##
+  ## is that makeNothing will preserve any hints that have been given to the 
+  ## variable. But, assigning a variable to ``nothing(T)`` will wipe out any
+  ## history.
+  if n.kind != nlkNothing:
+    n = N[T](kind: nlkNothing, hints: n.hints)
 
-proc actualSetError*[T](n: var N[T], e: ValidErrors, loc: string) =
+proc makeNull*[T](n: var N[T]) =
+  ## makes the parameter 'n' to be 'null'.
+  ##
+  ## the difference between:
+  ##
+  ##    var abc: N[int] = 4
+  ##    abc.makeNull()
+  ##
+  ## and
+  ##
+  ##    var abc: N[int] = 4
+  ##    abc = null(int)
+  ##
+  ## is that makeNull will preserve any hints that have been given to the 
+  ## variable. But, assigning a variable to ``null(T)`` will wipe out any
+  ## history.
+  if n.kind != nlkNothing:
+    n = N[T](kind: nlkNothing, hints: n.hints)
+
+proc actualSetError*[T](n: var N[T], e: ValidErrors, loc: string, level: Level, audience: Audience) =
   if n.kind != nlkError:
-    n = N[T](kind: nlkError)
+    n = N[T](kind: nlkError, hints: n.hints)
   var newErr = ExceptionClass()
   newErr.msg = e.msg
   newErr.exception_type = name(type(e))
   newErr.trace = loc
+  newErr.level = level
+  newErr.audience = audience
+  n.errors.add newErr
+
+proc actualSetError*[T](n: var N[T], e: ref Exception, loc: string, level: Level, audience: Audience) =
+  if n.kind != nlkError:
+    n = N[T](kind: nlkError, hints: n.hints)
+  var newErr = ExceptionClass()
+  newErr.msg = e.msg
+  newErr.exception_type = name(type(e))
+  newErr.trace = loc
+  newErr.level = level
+  newErr.audience = audience
   n.errors.add newErr
 
 proc actualSetError*[T](n: var N[T], e: N[T], loc: string) =
